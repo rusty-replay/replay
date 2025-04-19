@@ -13,6 +13,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@workspace/ui/components/sidebar';
+import { ModeSwitcher } from '@workspace/ui/components/mode-switcher';
 
 export default function Page() {
   return (
@@ -36,6 +37,9 @@ export default function Page() {
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
+          </div>
+          <div>
+            <ModeSwitcher />
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
