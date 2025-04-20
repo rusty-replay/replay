@@ -58,7 +58,6 @@ export default function ErrorList({ projectId }: { projectId: string }) {
     },
   });
 
-  // 검색 및 필터링된 에러 목록
   const filteredErrors = errorList
     ? errorList
         .filter((error) => {
@@ -74,19 +73,16 @@ export default function ErrorList({ projectId }: { projectId: string }) {
           return matchesSearch && matchesFilter;
         })
         .sort((a, b) => {
-          // 최신순 정렬
           return (
             new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
           );
         })
     : [];
 
-  // 에러 발생 시간 포맷팅
   const formatTime = (timestamp: string) => {
     return dayjs(timestamp).fromNow();
   };
 
-  // 에러 상세 페이지로 이동
   const navigateToDetail = (errorId: number) => {
     router.push(`/project/${projectId}/errors/${errorId}`);
   };
@@ -102,7 +98,6 @@ export default function ErrorList({ projectId }: { projectId: string }) {
         </CardHeader>
 
         <CardContent>
-          {/* 검색 및 필터 */}
           <div className="flex flex-col sm:flex-row justify-between mb-6 space-y-4 sm:space-y-0 sm:space-x-4">
             <div className="relative w-full sm:w-2/3">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -126,7 +121,6 @@ export default function ErrorList({ projectId }: { projectId: string }) {
             </Select>
           </div>
 
-          {/* 에러 목록 테이블 */}
           {isLoading ? (
             <div className="space-y-4">
               <Skeleton className="h-10 w-full" />
