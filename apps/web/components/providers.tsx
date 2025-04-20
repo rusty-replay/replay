@@ -1,7 +1,8 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import { ThemeProvider as NextThemesProvider } from "next-themes"
+import * as React from 'react';
+import { ThemeProvider as NextThemesProvider } from 'next-themes';
+import QueryClientProvider from '@/providers/query-client-provider';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -12,7 +13,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       disableTransitionOnChange
       enableColorScheme
     >
-      {children}
+      <QueryClientProvider>{children}</QueryClientProvider>
     </NextThemesProvider>
-  )
+  );
 }
