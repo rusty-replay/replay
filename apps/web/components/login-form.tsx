@@ -9,11 +9,36 @@ import {
 } from '@workspace/ui/components/card';
 import { Input } from '@workspace/ui/components/input';
 import { Label } from '@workspace/ui/components/label';
+import { useSignIn } from '@/api/auth/use-sign-in';
+import { useState } from 'react';
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<'div'>) {
+  const [loginForm, setLoginForm] = useState({
+    email: '',
+    password: '',
+  });
+
+  const { mutateAsync: signIn, isPending: isLoading } = useSignIn();
+  const handleSignIn = async () => {
+    await signIn(
+      {
+        email: loginForm.email,
+        password: loginForm.password,
+      },
+      {
+        onSuccess: (data) => {
+          console.log('Login successful', data);
+        },
+        onError: (error) => {
+          console.error('Login failed', error);
+        },
+      }
+    );
+  };
+
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
@@ -24,7 +49,12 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSignIn();
+            }}
+          >
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
@@ -33,6 +63,12 @@ export function LoginForm({
                   type="email"
                   placeholder="m@example.com"
                   required
+                  onChange={(e) => {
+                    setLoginForm({
+                      ...loginForm,
+                      email: e.target.value,
+                    });
+                  }}
                 />
               </div>
               <div className="grid gap-2">
@@ -45,9 +81,24 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required />
+                <Input
+                  id="password"
+                  type="password"
+                  required
+                  onChange={(e) => {
+                    setLoginForm({
+                      ...loginForm,
+                      password: e.target.value,
+                    });
+                  }}
+                />
               </div>
-              <Button type="submit" className="w-full">
+              <Button
+                type="submit"
+                className="w-full"
+                // onClick={handleSignIn}
+                disabled={isLoading}
+              >
                 Login
               </Button>
               <Button variant="outline" className="w-full">
