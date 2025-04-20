@@ -33,10 +33,12 @@ import { Project } from '@/api/project/types';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import ProjectList from './project-list';
+import { useRouter } from 'next/navigation';
 
 dayjs.locale('ko');
 
 export default function ProjectDetail() {
+  const router = useRouter();
   const { projectId } = useGetProjectParams();
   const { data: projectList, isLoading } = useQueryProjectList();
   const [currentProject, setCurrentProject] = React.useState<Project | null>(
@@ -181,7 +183,7 @@ export default function ProjectDetail() {
                   size="sm"
                   className="flex items-center gap-2"
                   onClick={() => {
-                    // 새로고침 로직
+                    router.refresh();
                   }}
                 >
                   <RefreshCw size={14} />
