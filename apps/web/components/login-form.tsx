@@ -11,11 +11,14 @@ import { Input } from '@workspace/ui/components/input';
 import { Label } from '@workspace/ui/components/label';
 import { useSignIn } from '@/api/auth/use-sign-in';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<'div'>) {
+  const router = useRouter();
+
   const [loginForm, setLoginForm] = useState({
     email: '',
     password: '',
@@ -31,6 +34,7 @@ export function LoginForm({
       {
         onSuccess: (data) => {
           console.log('Login successful', data);
+          router.push('/');
         },
         onError: (error) => {
           console.error('Login failed', error);
