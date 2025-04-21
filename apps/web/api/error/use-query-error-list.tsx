@@ -1,14 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 import { axiosInstance } from '../axios';
 import { UseQueryCustomOptions } from '../types';
-import { ErrorReportResponse } from './types';
+import { ErrorReportListResponse } from './types';
 
 export function useQueryErrorList({
   projectId,
   options,
 }: {
   projectId: number;
-  options?: UseQueryCustomOptions<void, ErrorReportResponse[]>;
+  options?: UseQueryCustomOptions<void, ErrorReportListResponse[]>;
 }) {
   const queryKey = `/api/projects/${projectId}/errors`;
   const queryFn = async () =>

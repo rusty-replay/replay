@@ -41,6 +41,7 @@ import {
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { ErrorReportListResponse } from '@/api/error/types';
 
 dayjs.extend(relativeTime);
 dayjs.locale('ko');
@@ -58,7 +59,7 @@ export default function ErrorList({ projectId }: { projectId: string }) {
     },
   });
 
-  const filteredErrors = errorList
+  const filteredErrors: ErrorReportListResponse[] = errorList
     ? errorList
         .filter((error) => {
           const matchesSearch =
@@ -167,17 +168,16 @@ export default function ErrorList({ projectId }: { projectId: string }) {
                           {error.message}
                         </div>
                         <div className="text-xs text-muted-foreground mt-1">
-                          Hash: {error.groupHash.substring(0, 8)}...
+                          Hash: {error.groupHash}...
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          {(error as any).browser ? (
+                          {error.browser ? (
                             <>
                               <Globe size={14} />
                               <span>
-                                {(error as any).browser} /{' '}
-                                {(error as any).os || 'Unknown'}
+                                {error.browser} / {error.os || 'Unknown'}
                               </span>
                             </>
                           ) : (
@@ -192,7 +192,8 @@ export default function ErrorList({ projectId }: { projectId: string }) {
                         <Badge variant="outline">{error.appVersion}</Badge>
                       </TableCell>
                       <TableCell>
-                        {error.replay &&
+                        replay
+                        {/* {error.replay &&
                         Array.isArray(error.replay) &&
                         error.replay.length > 0 ? (
                           <Badge
@@ -208,7 +209,7 @@ export default function ErrorList({ projectId }: { projectId: string }) {
                           >
                             없음
                           </Badge>
-                        )}
+                        )} */}
                       </TableCell>
                       <TableCell className="text-right">
                         <Button

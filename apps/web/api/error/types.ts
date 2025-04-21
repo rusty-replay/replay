@@ -6,5 +6,25 @@ export interface ErrorReportResponse {
   timestamp: string;
   groupHash: string;
   replay: any;
-  issueId: number;
+  environment: string;
+  browser: string | null;
+  os: string | null;
+  ipAddress: string | null;
+  userAgent: string | null;
+  projectId: number;
+  issueId: number | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ErrorReportListResponse {
+  id: number;
+  message: string;
+  stacktrace: string;
+  appVersion: string;
+  timestamp: string;
+  groupHash: string;
+  issueId: number | null;
+  browser: string | null;
+  os: string | null;
 }
