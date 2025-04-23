@@ -1,8 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 
 export const axiosInstance: AxiosInstance = axios.create({
-  // baseURL: process.env.NEXT_PUBLIC_API_URL,
-  baseURL: 'http://localhost:8080',
+  baseURL: process.env.NEXT_PUBLIC_RUSTY_REPLAY_API_URL,
   withCredentials: true,
 });
 
@@ -31,12 +30,9 @@ axiosInstance.interceptors.response.use(
 
       try {
         const refreshToken = localStorage.getItem('refreshToken');
-        const response = await axios.post(
-          'http://localhost:8080/auth/refresh',
-          {
-            refreshToken: refreshToken,
-          }
-        );
+        const response = await axiosInstance.post('/auth/refresh', {
+          refreshToken: refreshToken,
+        });
 
         const { token } = response.data;
         localStorage.setItem('token', token);
