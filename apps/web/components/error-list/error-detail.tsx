@@ -34,6 +34,7 @@ import {
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import 'rrweb-player/dist/style.css';
+import { unpack } from '@rrweb/packer';
 
 export default function ErrorDetail({
   params,
@@ -133,6 +134,7 @@ export default function ErrorDetail({
             autoPlay: false,
             showController: true,
             skipInactive: true,
+            // unpackFn: unpack,
           },
         });
 
