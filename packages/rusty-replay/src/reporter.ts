@@ -38,7 +38,7 @@ let globalOpts: { beforeErrorSec: number } = { beforeErrorSec: 30 };
 
 export function init(options: InitOptions) {
   startRecording();
-  globalOpts.beforeErrorSec = options.beforeErrorSec ?? 30;
+  globalOpts.beforeErrorSec = options.beforeErrorSec ?? 10;
   batcher = new ErrorBatcher({
     endpoint: options.endpoint,
     apiKey: options.apiKey,

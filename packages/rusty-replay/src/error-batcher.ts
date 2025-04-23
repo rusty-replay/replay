@@ -40,6 +40,9 @@ export class ErrorBatcher {
         this.opts.endpoint,
         { events: batch },
         {
+          maxBodyLength: 1000 * 1024 * 1024, // 10MB
+          maxContentLength: 1000 * 1024 * 1024, // 10MB
+          timeout: 3000,
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${this.opts.apiKey}`,

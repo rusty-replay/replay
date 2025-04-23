@@ -1,5 +1,6 @@
 import type { eventWithTime } from '@rrweb/types';
 import { record } from 'rrweb';
+import { pack } from '@rrweb/packer';
 
 let events: eventWithTime[] = [];
 const MAX_EVENTS = 1000;
@@ -13,6 +14,7 @@ export function startRecording() {
         events = events.slice(-MAX_EVENTS);
       }
     },
+    // packFn: pack,
   });
 }
 
