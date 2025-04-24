@@ -10,7 +10,7 @@ export default function useQueryErrorDetail({
 }: {
   projectId: number;
   errorId: number;
-  options?: UseQueryCustomOptions<ErrorReportResponse, void>;
+  options?: UseQueryCustomOptions<void, ErrorReportResponse>;
 }) {
   const queryKey = `/api/projects/${projectId}/errors/${errorId}`;
   const queryFn = async () =>

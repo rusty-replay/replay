@@ -147,6 +147,9 @@ importers:
       rrweb-player:
         specifier: ^1.0.0-alpha.4
         version: 1.0.0-alpha.4
+      rrweb-snapshot:
+        specifier: 2.0.0-alpha.4
+        version: 2.0.0-alpha.4
     devDependencies:
       '@types/node':
         specifier: ^20

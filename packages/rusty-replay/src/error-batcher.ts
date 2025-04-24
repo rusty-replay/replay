@@ -42,7 +42,7 @@ export class ErrorBatcher {
         {
           maxBodyLength: 1000 * 1024 * 1024, // 10MB
           maxContentLength: 1000 * 1024 * 1024, // 10MB
-          timeout: 3000,
+          timeout: 30000,
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${this.opts.apiKey}`,

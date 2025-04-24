@@ -57,6 +57,8 @@ export default function ErrorDetail({
     },
   });
 
+  console.log('replay>>>', error?.replay);
+
   const hasReplay =
     error?.replay && Array.isArray(error.replay) && error.replay.length > 0;
 
@@ -262,26 +264,26 @@ export default function ErrorDetail({
                     <Badge variant="outline">{error.appVersion}</Badge>
                   </div>
 
-                  {(error as any).browser && (
+                  {error.browser && (
                     <div>
                       <h3 className="text-sm font-medium text-muted-foreground mb-1">
                         브라우저
                       </h3>
                       <div className="flex items-center gap-2">
                         <Globe size={16} />
-                        <span>{(error as any).browser}</span>
+                        <span>{error.browser}</span>
                       </div>
                     </div>
                   )}
 
-                  {(error as any).os && (
+                  {error.os && (
                     <div>
                       <h3 className="text-sm font-medium text-muted-foreground mb-1">
                         운영체제
                       </h3>
                       <div className="flex items-center gap-2">
                         <Smartphone size={16} />
-                        <span>{(error as any).os}</span>
+                        <span>{error.os}</span>
                       </div>
                     </div>
                   )}
@@ -299,7 +301,7 @@ export default function ErrorDetail({
                     </h3>
                     {hasReplay ? (
                       <Badge
-                        variant="success"
+                        variant="outline"
                         className="bg-green-100 text-green-800"
                       >
                         사용 가능 ({error.replay.length}개 이벤트)

@@ -1,6 +1,11 @@
-import { startRecording, getRecordedEvents } from './recorder';
 import { getBrowserInfo, getEnvironment } from './environment';
 import { ErrorBatcher } from './error-batcher';
+import {
+  startRecording,
+  getRecordedEvents,
+  getCurrentEvents,
+  clearEvents,
+} from './recorder';
 
 export interface BatchedEvent {
   id: string;
@@ -37,15 +42,35 @@ let batcher: ErrorBatcher;
 let globalOpts: { beforeErrorSec: number } = { beforeErrorSec: 30 };
 
 export function init(options: InitOptions) {
-  startRecording();
   globalOpts.beforeErrorSec = options.beforeErrorSec ?? 10;
+
   batcher = new ErrorBatcher({
     endpoint: options.endpoint,
     apiKey: options.apiKey,
     flushIntervalMs: options.flushIntervalMs,
     maxBufferSize: options.maxBufferSize,
   });
-  import('./handler.js').then((mod) => mod.setupGlobalErrorHandler());
+
+  if (typeof window !== 'undefined') {
+    const start = () => {
+      startRecording(); // DOM 렌더링 후에 시작되도록 지연 실행
+      import('./handler.js').then((mod) => mod.setupGlobalErrorHandler());
+    };
+
+    if (document.readyState === 'complete') {
+      requestAnimationFrame(() => startRecording());
+    } else {
+      window.addEventListener('load', () => {
+        requestAnimationFrame(() => startRecording());
+      });
+    }
+
+    // if ('requestIdleCallback' in window) {
+    //   window.requestIdleCallback(start);
+    // } else {
+    //   setTimeout(start, 100);
+    // }
+  }
 }
 
 export function captureException(
@@ -53,8 +78,18 @@ export function captureException(
   additionalInfo?: Record<string, any>,
   userId?: number
 ): string {
+  const errorTime = Date.now();
+  const eventsSnapshot = getCurrentEvents();
+  const replay = getRecordedEvents(
+    globalOpts.beforeErrorSec,
+    errorTime,
+    eventsSnapshot
+  );
+
+  clearEvents(); // 다음 에러 기록을 위해 초기화
+
   const { browser, os, userAgent } = getBrowserInfo();
-  const replay = getRecordedEvents(globalOpts.beforeErrorSec);
+
   return batcher.capture({
     message: error.message ?? '',
     stacktrace: error.stack ?? '',
@@ -68,26 +103,4 @@ export function captureException(
     appVersion: '1.0.0',
     apiKey: batcher.getApiKey(),
   });
-}
-
-export function wrap<T extends (...args: any[]) => any>(
-  fn: T,
-  info?: { additionalInfo?: Record<string, any>; userId?: number }
-): (...args: Parameters<T>) => ReturnType<T> {
-  return (...args) => {
-    try {
-      return fn(...args);
-    } catch (err) {
-      if (err instanceof Error) {
-        captureException(err, info?.additionalInfo, info?.userId);
-      } else {
-        captureException(
-          new Error(String(err)),
-          info?.additionalInfo,
-          info?.userId
-        );
-      }
-      throw err;
-    }
-  };
 }
