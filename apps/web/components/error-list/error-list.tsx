@@ -88,8 +88,8 @@ export default function ErrorList({
     return dayjs(timestamp).fromNow();
   };
 
-  const navigateToDetail = (errorId: number) => {
-    router.push(`/project/${projectId}/errors/${errorId}`);
+  const navigateToDetail = (issueId: number) => {
+    router.push(`/project/${projectId}/issues/${issueId}`);
   };
 
   return (

@@ -83,7 +83,7 @@ export default function ProjectDetail() {
           variant="outline"
           size="sm"
           onClick={() => {
-            router.push(`/project/${projectId}/error`);
+            router.push(`/project/${projectId}/issues`);
           }}
         >
           <Shield size={16} className="mr-2" />
