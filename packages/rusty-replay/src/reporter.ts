@@ -7,6 +7,23 @@ import {
   clearEvents,
 } from './recorder';
 
+export interface AdditionalInfo {
+  pageUrl: string;
+  request: {
+    url: string;
+    method: string;
+    headers: Record<string, string>;
+  };
+  response: {
+    data: {
+      message: string;
+      errorCode: string;
+    };
+    status: number;
+    statusText: string;
+  };
+}
+
 export interface BatchedEvent {
   id: string;
   timestamp: string;
@@ -18,7 +35,7 @@ export interface BatchedEvent {
   os: string;
   userAgent: string;
   userId?: number;
-  additionalInfo?: Record<string, any>;
+  additionalInfo?: AdditionalInfo;
   appVersion: string;
   apiKey: string;
 }
@@ -75,7 +92,7 @@ export function init(options: InitOptions) {
 
 export function captureException(
   error: Error,
-  additionalInfo?: Record<string, any>,
+  additionalInfo?: AdditionalInfo,
   userId?: number
 ): string {
   const errorTime = Date.now();
