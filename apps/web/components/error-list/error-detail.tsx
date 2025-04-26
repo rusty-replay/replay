@@ -144,7 +144,7 @@ export default function ErrorDetail({ params }: ErrorDetailProps) {
   };
 
   const goBack = () => {
-    router.push(`/project/${projectId}/errors`);
+    router.push(`/project/${projectId}/issues`);
   };
 
   const formatStacktrace = (stacktrace: string) => {
