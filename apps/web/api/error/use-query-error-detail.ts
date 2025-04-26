@@ -5,14 +5,14 @@ import { axiosInstance } from '../axios';
 
 export default function useQueryErrorDetail({
   projectId,
-  errorId,
+  issueId,
   options,
 }: {
   projectId: number;
-  errorId: number;
+  issueId: number;
   options?: UseQueryCustomOptions<void, ErrorReportResponse>;
 }) {
-  const queryKey = `/api/projects/${projectId}/errors/${errorId}`;
+  const queryKey = `/api/projects/${projectId}/errors/${issueId}`;
   const queryFn = async () =>
     await axiosInstance.get(queryKey).then((res) => res.data);
 

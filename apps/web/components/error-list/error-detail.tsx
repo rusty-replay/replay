@@ -40,7 +40,7 @@ export default function ErrorDetail({ params }: ErrorDetailProps) {
 
   const { data: error, isLoading } = useQueryErrorDetail({
     projectId: projectId as number,
-    errorId: issueId as number,
+    issueId: issueId as number,
     options: {
       refetchOnWindowFocus: false,
       enabled: !!(issueId && projectId),
