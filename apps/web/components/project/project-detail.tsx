@@ -28,6 +28,7 @@ import {
   Trash2,
   RefreshCw,
   KeyRound,
+  Shield,
 } from 'lucide-react';
 import { Project } from '@/api/project/types';
 import dayjs from 'dayjs';
@@ -71,11 +72,22 @@ export default function ProjectDetail() {
           variant="outline"
           size="sm"
           onClick={() => {
-            console.log('Navigate back to project list');
+            router.push('/project');
           }}
         >
           <ArrowLeft size={16} className="mr-2" />
           프로젝트 목록
+        </Button>
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            router.push(`/project/${projectId}/error`);
+          }}
+        >
+          <Shield size={16} className="mr-2" />
+          모든 이슈
         </Button>
 
         {!isLoading && !currentProject && (

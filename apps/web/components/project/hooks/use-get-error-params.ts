@@ -2,7 +2,9 @@ import { useParams } from 'next/navigation';
 import React from 'react';
 
 export function useGetErrorParams() {
-  const { error_id: errorId } = useParams();
+  const { issue_id: issueId } = useParams<{
+    issue_id: string;
+  }>();
 
-  return { errorId };
+  return { issueId: issueId ? parseInt(issueId) : undefined };
 }

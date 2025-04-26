@@ -7,10 +7,10 @@ import React from 'react';
 
 export default function ErrorDetailPage() {
   const { projectId } = useGetProjectParams();
-  const { errorId } = useGetErrorParams();
+  const { issueId } = useGetErrorParams();
   return (
     <div>
-      <ErrorDetail params={{ errorId, projectId }} />
+      <ErrorDetail params={{ issueId, projectId }} />
     </div>
   );
 }

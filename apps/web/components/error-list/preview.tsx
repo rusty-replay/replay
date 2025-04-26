@@ -1,5 +1,3 @@
-'use client';
-
 import React, { RefObject } from 'react';
 import {
   Card,
@@ -47,14 +45,14 @@ export interface BackButtonProps {
   onClick: () => void;
 }
 
-export const BackButton: React.FC<BackButtonProps> = ({ onClick }) => (
+export const BackButton = ({ onClick }: BackButtonProps) => (
   <Button variant="outline" size="sm" onClick={onClick}>
     <ArrowLeft size={16} className="mr-2" />
     에러 목록으로 돌아가기
   </Button>
 );
 
-export const LoadingSkeleton: React.FC = () => (
+export const LoadingSkeleton = () => (
   <Card>
     <CardHeader>
       <Skeleton className="h-8 w-1/3" />
@@ -71,20 +69,17 @@ export const LoadingSkeleton: React.FC = () => (
 );
 
 export interface ErrorNotFoundProps {
-  errorId: number;
-  goBack: () => void;
+  issueId: number | undefined;
+  goBack: VoidFunction;
 }
 
-export const ErrorNotFound: React.FC<ErrorNotFoundProps> = ({
-  errorId,
-  goBack,
-}) => (
+export const ErrorNotFound = ({ issueId, goBack }: ErrorNotFoundProps) => (
   <Card>
     <CardContent className="p-6 flex flex-col items-center justify-center">
       <AlertCircle size={48} className="text-red-500 mb-4" />
       <h2 className="text-xl font-semibold mb-2">에러를 찾을 수 없습니다</h2>
       <p className="text-muted-foreground text-center">
-        요청하신 에러 ID: {errorId}를 찾을 수 없습니다.
+        요청하신 에러 ID: {issueId}를 찾을 수 없습니다.
         <br />
         에러가 삭제되었거나 접근 권한이 없을 수 있습니다.
       </p>
@@ -100,10 +95,7 @@ export interface BasicInfoItemProps {
   children: React.ReactNode;
 }
 
-export const BasicInfoItem: React.FC<BasicInfoItemProps> = ({
-  label,
-  children,
-}) => (
+export const BasicInfoItem = ({ label, children }: BasicInfoItemProps) => (
   <div>
     <h3 className="text-sm font-medium text-muted-foreground mb-1">{label}</h3>
     {children}
@@ -114,9 +106,7 @@ export interface StacktracePreviewProps {
   stacktrace: string;
 }
 
-export const StacktracePreview: React.FC<StacktracePreviewProps> = ({
-  stacktrace,
-}) => (
+export const StacktracePreview = ({ stacktrace }: StacktracePreviewProps) => (
   <div>
     <h3 className="text-md font-semibold mb-2">스택트레이스 미리보기</h3>
     <div className="bg-gray-100 p-3 rounded-md overflow-auto max-h-32">
@@ -132,9 +122,9 @@ export interface AdditionalInfoSectionProps {
   additionalInfo: AdditionalInfo | null;
 }
 
-export const AdditionalInfoSection: React.FC<AdditionalInfoSectionProps> = ({
+export const AdditionalInfoSection = ({
   additionalInfo,
-}) => {
+}: AdditionalInfoSectionProps) => {
   if (!additionalInfo) return null;
 
   return (
@@ -285,13 +275,13 @@ export interface OverviewTabProps {
   setActiveTab: (tab: string) => void;
 }
 
-export const OverviewTab: React.FC<OverviewTabProps> = ({
+export const OverviewTab = ({
   error,
   formatDate,
   formatStacktrace,
   hasReplay,
   setActiveTab,
-}) => (
+}: OverviewTabProps) => (
   <Card>
     <CardHeader>
       <CardTitle className="text-xl font-bold text-red-600 flex items-center gap-2">
@@ -383,10 +373,10 @@ export interface StacktraceTabProps {
   formatStacktrace: (stacktrace: string) => string;
 }
 
-export const StacktraceTab: React.FC<StacktraceTabProps> = ({
+export const StacktraceTab = ({
   error,
   formatStacktrace,
-}) => (
+}: StacktraceTabProps) => (
   <Card>
     <CardHeader>
       <CardTitle className="text-xl">스택트레이스</CardTitle>
@@ -418,7 +408,7 @@ export interface ReplayTabProps {
   setActiveTab: (tab: string) => void;
 }
 
-export const ReplayTab: React.FC<ReplayTabProps> = ({
+export const ReplayTab = ({
   error,
   playerRef,
   playerInitialized,
@@ -426,7 +416,7 @@ export const ReplayTab: React.FC<ReplayTabProps> = ({
   setPlayerError,
   setPlayerInitialized,
   setActiveTab,
-}) => (
+}: ReplayTabProps) => (
   <Card>
     <CardHeader>
       <CardTitle className="text-xl">세션 리플레이</CardTitle>

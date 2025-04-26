@@ -24,25 +24,26 @@ import {
 
 interface ErrorDetailProps {
   params: {
-    projectId: string;
-    errorId: string;
+    projectId: number | undefined;
+    issueId: number | undefined;
   };
 }
 
 export default function ErrorDetail({ params }: ErrorDetailProps) {
   const router = useRouter();
-  const projectId = parseInt(params.projectId);
-  const errorId = parseInt(params.errorId);
+  const projectId = params.projectId;
+  const issueId = params.issueId;
   const playerRef = useRef<HTMLDivElement>(null);
   const [playerInitialized, setPlayerInitialized] = useState(false);
   const [playerError, setPlayerError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('overview');
 
   const { data: error, isLoading } = useQueryErrorDetail({
-    projectId,
-    errorId,
+    projectId: projectId as number,
+    errorId: issueId as number,
     options: {
       refetchOnWindowFocus: false,
+      enabled: !!(issueId && projectId),
     },
   });
 
@@ -224,7 +225,7 @@ export default function ErrorDetail({ params }: ErrorDetailProps) {
           )}
         </Tabs>
       ) : (
-        <ErrorNotFound errorId={errorId} goBack={goBack} />
+        <ErrorNotFound issueId={issueId} goBack={goBack} />
       )}
     </div>
   );
