@@ -58,7 +58,7 @@ const data = {
   projects: [
     {
       name: 'Projects',
-      url: 'project',
+      url: '/project',
       icon: Activity,
     },
     {
