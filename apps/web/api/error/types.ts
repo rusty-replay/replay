@@ -1,3 +1,5 @@
+import { AdditionalInfo } from 'rusty-replay';
+
 export interface ErrorReportResponse {
   id: number;
   message: string;
@@ -13,6 +15,7 @@ export interface ErrorReportResponse {
   userAgent: string | null;
   projectId: number;
   issueId: number | null;
+  additionalInfo: AdditionalInfo | null;
   createdAt: string;
   updatedAt: string;
 }
