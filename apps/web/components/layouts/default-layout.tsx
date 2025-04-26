@@ -1,7 +1,6 @@
 'use client';
 
 import React, { ReactNode } from 'react';
-import { AppSidebar } from '@workspace/ui/components/app-sidebar';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -17,6 +16,7 @@ import {
   SidebarTrigger,
 } from '@workspace/ui/components/sidebar';
 import { ModeSwitcher } from '@workspace/ui/components/mode-switcher';
+import { AppSidebar } from '../widget/app-sidebar';
 
 export default function DefaultLayout({ children }: { children: ReactNode }) {
   return (
@@ -30,13 +30,11 @@ export default function DefaultLayout({ children }: { children: ReactNode }) {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    Building Your Application
-                  </BreadcrumbLink>
+                  <BreadcrumbLink href="#">rusty-replay</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+                  <BreadcrumbPage>issue tracing</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -53,7 +51,7 @@ export default function DefaultLayout({ children }: { children: ReactNode }) {
             <div className="aspect-video rounded-xl bg-muted/50" />
             <div className="aspect-video rounded-xl bg-muted/50" />
           </div> */}
-          <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
+          {/* <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" /> */}
         </div>
       </SidebarInset>
     </SidebarProvider>

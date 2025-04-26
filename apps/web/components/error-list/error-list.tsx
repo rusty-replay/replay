@@ -46,7 +46,11 @@ import { ErrorReportListResponse } from '@/api/error/types';
 dayjs.extend(relativeTime);
 dayjs.locale('ko');
 
-export default function ErrorList({ projectId }: { projectId: string }) {
+export default function ErrorList({
+  projectId,
+}: {
+  projectId: number | undefined;
+}) {
   const router = useRouter();
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -55,7 +59,7 @@ export default function ErrorList({ projectId }: { projectId: string }) {
   const { data: errorList, isLoading } = useQueryErrorList({
     projectId: projectId as number,
     options: {
-      refetchInterval: 30000,
+      enabled: !!projectId,
     },
   });
 
@@ -92,7 +96,7 @@ export default function ErrorList({ projectId }: { projectId: string }) {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">에러 로그</CardTitle>
+          <CardTitle className="text-2xl font-bold">Issue log</CardTitle>
           <CardDescription>
             프로젝트에서 발생한 모든 에러를 확인할 수 있습니다.
           </CardDescription>
