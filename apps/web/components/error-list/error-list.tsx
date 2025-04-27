@@ -41,7 +41,7 @@ import {
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { ErrorReportListResponse } from '@/api/error/types';
+import { EventReportListResponse } from '@/api/error/types';
 
 dayjs.extend(relativeTime);
 dayjs.locale('ko');
@@ -63,7 +63,7 @@ export default function ErrorList({
     },
   });
 
-  const filteredErrors: ErrorReportListResponse[] = errorList
+  const filteredErrors: EventReportListResponse[] = errorList
     ? errorList
         .filter((error) => {
           const matchesSearch =

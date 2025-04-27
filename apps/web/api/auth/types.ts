@@ -11,3 +11,8 @@ export interface SignInResponse {
   email: string;
   role: 'user' | 'admin';
 }
+
+export interface RefreshTokenResponse {
+  accessToken: string;
+  refreshToken: string;
+}

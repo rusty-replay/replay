@@ -1,6 +1,6 @@
 import { AdditionalInfo } from 'rusty-replay';
 
-export interface ErrorReportResponse {
+export interface EventReportResponse {
   id: number;
   message: string;
   stacktrace: string;
@@ -20,7 +20,7 @@ export interface ErrorReportResponse {
   updatedAt: string;
 }
 
-export interface ErrorReportListResponse {
+export interface EventReportListResponse {
   id: number;
   message: string;
   stacktrace: string;

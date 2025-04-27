@@ -39,7 +39,7 @@ import {
 } from 'lucide-react';
 import dayjs from 'dayjs';
 import { AdditionalInfo } from 'rusty-replay';
-import { ErrorReportResponse } from '@/api/error/types';
+import { EventReportResponse } from '@/api/error/types';
 
 export interface BackButtonProps {
   onClick: () => void;
@@ -268,7 +268,7 @@ export const AdditionalInfoSection = ({
 };
 
 export interface OverviewTabProps {
-  error: ErrorReportResponse;
+  error: EventReportResponse;
   formatDate: (date: string) => string;
   formatStacktrace: (stacktrace: string) => string;
   hasReplay: boolean;
@@ -369,7 +369,7 @@ export const OverviewTab = ({
 );
 
 export interface StacktraceTabProps {
-  error: ErrorReportResponse;
+  error: EventReportResponse;
   formatStacktrace: (stacktrace: string) => string;
 }
 
@@ -399,7 +399,7 @@ export const StacktraceTab = ({
 );
 
 export interface ReplayTabProps {
-  error: ErrorReportResponse;
+  error: EventReportResponse;
   playerRef: RefObject<HTMLDivElement | null>;
   playerInitialized: boolean;
   playerError: string | null;

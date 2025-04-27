@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { axiosInstance } from '../axios';
 import { UseMutationCustomOptions } from '../types';
+import axiosInstance from '../axios';
 
 export function healthCheck({
   enabled = false,

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { UseQueryCustomOptions } from '../types';
-import { ErrorReportResponse } from './types';
-import { axiosInstance } from '../axios';
+import { EventReportResponse } from './types';
+import axiosInstance from '../axios';
 
 export default function useQueryErrorDetail({
   projectId,
@@ -10,9 +10,9 @@ export default function useQueryErrorDetail({
 }: {
   projectId: number;
   issueId: number;
-  options?: UseQueryCustomOptions<void, ErrorReportResponse>;
+  options?: UseQueryCustomOptions<void, EventReportResponse>;
 }) {
-  const queryKey = `/api/projects/${projectId}/errors/${issueId}`;
+  const queryKey = `/api/projects/${projectId}/events/${issueId}`;
   const queryFn = async () =>
     await axiosInstance.get(queryKey).then((res) => res.data);
 

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { axiosInstance } from '../axios';
 import { UseQueryCustomOptions } from '../types';
 import { Project } from './types';
+import axiosInstance from '../axios';
 
 export function useQueryProjectList(
   options?: UseQueryCustomOptions<void, Project[]>
