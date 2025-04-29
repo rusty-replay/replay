@@ -9,7 +9,7 @@ export class ErrorBatcher {
 
   constructor(private opts: BatcherOptions) {
     this.apiKey = opts.apiKey;
-    const interval = opts.flushIntervalMs ?? 3000;
+    const interval = opts.flushIntervalMs ?? 30000;
     this.flushTimer = window.setInterval(() => this.flush(), interval);
     window.addEventListener('beforeunload', () => this.flushOnUnload());
   }
@@ -45,7 +45,6 @@ export class ErrorBatcher {
           timeout: 30000,
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.opts.apiKey}`,
           },
         }
       );

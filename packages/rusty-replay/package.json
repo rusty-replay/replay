@@ -22,6 +22,7 @@
   "dependencies": {
     "@rrweb/packer": "2.0.0-alpha.18",
     "axios": "^1.8.4",
+    "fflate": "^0.8.2",
     "rrweb-snapshot": "2.0.0-alpha.4"
   },
   "devDependencies": {

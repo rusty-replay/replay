@@ -1,6 +1,5 @@
 import type { eventWithTime, listenerHandler } from '@rrweb/types';
 import { record } from 'rrweb';
-import { pack } from '@rrweb/packer';
 
 let events: eventWithTime[] = [];
 const MAX_EVENTS = 1000;
@@ -21,7 +20,20 @@ export function startRecording() {
     // checkoutEveryNms: 1000, // 1초마다 체크아웃
     checkoutEveryNms: 15000, // 15초마다 한 번
     checkoutEveryNth: 100, // 100개 이벤트마다 한 번
-    packFn: pack,
+    maskAllInputs: true,
+    sampling: {
+      mouseInteraction: {
+        MouseUp: false,
+        MouseDown: false,
+        Click: false,
+        ContextMenu: false,
+        DblClick: false,
+        Focus: false,
+        Blur: false,
+        TouchStart: false,
+        TouchEnd: false,
+      },
+    },
   });
 }
 
@@ -49,34 +61,6 @@ export function getRecordedEvents(
 
   return sliced;
 }
-
-// export function getRecordedEvents(
-//   beforeErrorSec = 10,
-//   errorTime = Date.now(),
-//   source = events
-// ): eventWithTime[] {
-//   const sliced = source.filter(
-//     (e) => errorTime - e.timestamp < beforeErrorSec * 1000
-//   );
-
-//   const fullSnapshots = source.filter((e) => e.type === 2);
-//   const lastSnapshot = fullSnapshots.reverse().find(
-//     (e) => e.timestamp <= sliced[0]?.timestamp
-//   );
-//   // const lastSnapshot = fullSnapshots
-//   //   .reverse()
-//   //   .find((e) => e.timestamp <= (sliced[0]?.timestamp ?? errorTime));
-
-//   if (lastSnapshot && !sliced.includes(lastSnapshot)) {
-//     return [lastSnapshot, ...sliced];
-//   }
-
-//   if (!sliced.some((e) => e.type === 2)) {
-//     console.warn('⚠️ Snapshot 없이 잘린 replay입니다. 복원 불가능할 수 있음.');
-//   }
-
-//   return sliced;
-// }
 
 export function clearEvents() {
   events = [];

@@ -23,6 +23,5 @@ export function getBrowserInfo() {
 
 export function getEnvironment(): 'development' | 'staging' | 'production' {
   if (process.env.NODE_ENV === 'development') return 'development';
-  if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview') return 'staging';
   return 'production';
 }

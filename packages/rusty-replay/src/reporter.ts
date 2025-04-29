@@ -6,6 +6,7 @@ import {
   getCurrentEvents,
   clearEvents,
 } from './recorder';
+import { compressToBase64 } from './utils';
 
 export interface AdditionalInfo {
   pageUrl: string;
@@ -29,13 +30,13 @@ export interface BatchedEvent {
   timestamp: string;
   message: string;
   stacktrace: string;
-  replay: any[];
+  replay: string | null;
   environment: string;
   browser: string;
   os: string;
   userAgent: string;
   userId?: number;
-  additionalInfo?: AdditionalInfo;
+  additionalInfo?: Partial<AdditionalInfo>;
   appVersion: string;
   apiKey: string;
 }
@@ -69,11 +70,6 @@ export function init(options: InitOptions) {
   });
 
   if (typeof window !== 'undefined') {
-    const start = () => {
-      startRecording(); // DOM 렌더링 후에 시작되도록 지연 실행
-      import('./handler.js').then((mod) => mod.setupGlobalErrorHandler());
-    };
-
     if (document.readyState === 'complete') {
       requestAnimationFrame(() => startRecording());
     } else {
@@ -81,36 +77,32 @@ export function init(options: InitOptions) {
         requestAnimationFrame(() => startRecording());
       });
     }
-
-    // if ('requestIdleCallback' in window) {
-    //   window.requestIdleCallback(start);
-    // } else {
-    //   setTimeout(start, 100);
-    // }
   }
 }
 
 export function captureException(
   error: Error,
-  additionalInfo?: AdditionalInfo,
+  additionalInfo?: Partial<AdditionalInfo>,
   userId?: number
 ): string {
   const errorTime = Date.now();
   const eventsSnapshot = getCurrentEvents();
-  const replay = getRecordedEvents(
+  const rawReplay = getRecordedEvents(
     globalOpts.beforeErrorSec,
     errorTime,
     eventsSnapshot
   );
 
-  clearEvents(); // 다음 에러 기록을 위해 초기화
+  clearEvents();
 
   const { browser, os, userAgent } = getBrowserInfo();
+
+  const compressedReplay = compressToBase64(rawReplay);
 
   return batcher.capture({
     message: error.message ?? '',
     stacktrace: error.stack ?? '',
-    replay,
+    replay: compressedReplay as any,
     environment: getEnvironment(),
     browser,
     os,
