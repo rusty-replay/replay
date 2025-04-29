@@ -32,13 +32,10 @@ init({
 
 ## 🧠 글로벌 에러 자동 캡처
 
-```
-ts
-복사편집
+```ts
 import { setupGlobalErrorHandler } from 'rusty-replay';
 
 setupGlobalErrorHandler();
-
 ```
 
 - `window.onerror`
