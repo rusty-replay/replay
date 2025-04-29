@@ -21,7 +21,7 @@ import {
   StacktraceTab,
   ReplayTab,
 } from './preview';
-import { unpack } from '@rrweb/packer';
+import { decompressFromBase64 } from 'rusty-replay';
 
 interface ErrorDetailProps {
   params: {
@@ -49,7 +49,9 @@ export default function ErrorDetail({ params }: ErrorDetailProps) {
   });
 
   const hasReplay =
-    error?.replay && Array.isArray(error.replay) && error.replay.length > 0;
+    !!error?.replay &&
+    ((typeof error.replay === 'string' && error.replay.trim().length > 0) ||
+      (Array.isArray(error.replay) && error.replay.length > 0));
 
   useEffect(() => {
     if (
@@ -72,14 +74,22 @@ export default function ErrorDetail({ params }: ErrorDetailProps) {
 
         const { default: Player } = await import('rrweb-player');
 
-        let events = error.replay;
+        let events: any = error.replay;
 
         if (typeof events === 'string') {
           try {
-            events = JSON.parse(events);
+            const decompressed = decompressFromBase64(events);
+
+            if (!decompressed) {
+              throw new Error('Base64 디코딩 결과가 null입니다.');
+            }
+
+            events = decompressed;
           } catch (e) {
-            console.error('Failed to parse replay string:', e);
-            setPlayerError('리플레이 데이터 파싱에 실패했습니다.');
+            console.error('리플레이 base64 디코딩 또는 파싱 실패:', e);
+            setPlayerError(
+              '리플레이 데이터 압축 해제 또는 파싱에 실패했습니다.'
+            );
             return;
           }
         }
@@ -113,13 +123,12 @@ export default function ErrorDetail({ params }: ErrorDetailProps) {
         new Player({
           target: playerRef.current!,
           props: {
-            events: events,
-            width: 1000,
-            height: 600,
+            events,
+            width: 1200,
+            height: 800,
             autoPlay: false,
             showController: true,
             skipInactive: true,
-            unpackFn: unpack,
           },
         });
 
