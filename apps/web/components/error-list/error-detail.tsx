@@ -21,6 +21,7 @@ import {
   StacktraceTab,
   ReplayTab,
 } from './preview';
+import { unpack } from '@rrweb/packer';
 
 interface ErrorDetailProps {
   params: {
@@ -118,6 +119,7 @@ export default function ErrorDetail({ params }: ErrorDetailProps) {
             autoPlay: false,
             showController: true,
             skipInactive: true,
+            unpackFn: unpack,
           },
         });
 
@@ -175,7 +177,6 @@ export default function ErrorDetail({ params }: ErrorDetailProps) {
 
   return (
     <div className="space-y-6">
-      {/* 뒤로가기 버튼 */}
       <div>
         <BackButton onClick={goBack} />
       </div>

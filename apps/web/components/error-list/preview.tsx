@@ -42,7 +42,7 @@ import { AdditionalInfo } from 'rusty-replay';
 import { EventReportResponse } from '@/api/error/types';
 
 export interface BackButtonProps {
-  onClick: () => void;
+  onClick: VoidFunction;
 }
 
 export const BackButton = ({ onClick }: BackButtonProps) => (

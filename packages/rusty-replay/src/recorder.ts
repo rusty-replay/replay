@@ -21,7 +21,7 @@ export function startRecording() {
     // checkoutEveryNms: 1000, // 1초마다 체크아웃
     checkoutEveryNms: 15000, // 15초마다 한 번
     checkoutEveryNth: 100, // 100개 이벤트마다 한 번
-    // packFn: pack,
+    packFn: pack,
   });
 }
 
