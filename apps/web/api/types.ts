@@ -20,4 +20,14 @@ type UseQueryCustomOptions<TQueryFnData = unknown, TData = TQueryFnData> = Omit<
   'queryKey'
 >;
 
-export type { ResponseError, UseMutationCustomOptions, UseQueryCustomOptions };
+interface BaseTimeEntity {
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type {
+  ResponseError,
+  UseMutationCustomOptions,
+  UseQueryCustomOptions,
+  BaseTimeEntity,
+};

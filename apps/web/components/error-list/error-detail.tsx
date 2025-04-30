@@ -9,7 +9,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@workspace/ui/components/tabs';
-import dayjs from 'dayjs';
+
 import 'dayjs/locale/ko';
 import 'rrweb-player/dist/style.css';
 
@@ -21,7 +21,7 @@ import {
   StacktraceTab,
   ReplayTab,
 } from './preview';
-import { decompressFromBase64 } from 'rusty-replay';
+import { decompressFromBase64 } from '@workspace/rusty-replay/index';
 
 interface ErrorDetailProps {
   params: {
@@ -74,6 +74,7 @@ export default function ErrorDetail({ params }: ErrorDetailProps) {
 
         const { default: Player } = await import('rrweb-player');
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let events: any = error.replay;
 
         if (typeof events === 'string') {
@@ -107,6 +108,7 @@ export default function ErrorDetail({ params }: ErrorDetailProps) {
         }
 
         const validEvents = events.every(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (event: any) =>
             typeof event === 'object' &&
             event !== null &&
@@ -145,6 +147,7 @@ export default function ErrorDetail({ params }: ErrorDetailProps) {
 
     return () => {
       if (playerRef.current) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         playerRef.current.innerHTML = '';
       }
     };
@@ -168,7 +171,7 @@ export default function ErrorDetail({ params }: ErrorDetailProps) {
 
       return line
         .replace(
-          /at\s+([^\s\(]+)/g,
+          /at\s+([^\s\\(]+)/g,
           'at <span class="text-blue-600 font-medium">$1</span>'
         )
         .replace(
@@ -178,10 +181,6 @@ export default function ErrorDetail({ params }: ErrorDetailProps) {
     });
 
     return lines.join('\n');
-  };
-
-  const formatDate = (date: string) => {
-    return dayjs(date).format('YYYY년 MM월 DD일 HH:mm:ss');
   };
 
   return (
@@ -209,7 +208,6 @@ export default function ErrorDetail({ params }: ErrorDetailProps) {
           <TabsContent value="overview">
             <OverviewTab
               error={error}
-              formatDate={formatDate}
               formatStacktrace={formatStacktrace}
               hasReplay={hasReplay}
               setActiveTab={setActiveTab}

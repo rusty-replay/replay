@@ -38,8 +38,9 @@ import {
   CornerDownRight,
 } from 'lucide-react';
 import dayjs from 'dayjs';
-import { AdditionalInfo } from 'rusty-replay';
+import { AdditionalInfo } from '@workspace/rusty-replay/index';
 import { EventReportResponse } from '@/api/error/types';
+import { formatDate } from '@/utils/date';
 
 export interface BackButtonProps {
   onClick: VoidFunction;
@@ -269,7 +270,6 @@ export const AdditionalInfoSection = ({
 
 export interface OverviewTabProps {
   error: EventReportResponse;
-  formatDate: (date: string) => string;
   formatStacktrace: (stacktrace: string) => string;
   hasReplay: boolean;
   setActiveTab: (tab: string) => void;
@@ -277,7 +277,6 @@ export interface OverviewTabProps {
 
 export const OverviewTab = ({
   error,
-  formatDate,
   formatStacktrace,
   hasReplay,
   setActiveTab,

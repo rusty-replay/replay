@@ -35,6 +35,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import ProjectList from './project-list';
 import { useRouter } from 'next/navigation';
+import { formatDateFromNow } from '@/utils/date';
 
 dayjs.locale('ko');
 
@@ -56,14 +57,6 @@ export default function ProjectDetail() {
   if (!projectId) {
     return <ProjectList />;
   }
-
-  const formatDate = (dateString: string) => {
-    try {
-      return dayjs(dateString).format('YYYY년 MM월 DD일 HH:mm:ss');
-    } catch (e) {
-      return dateString;
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -175,7 +168,7 @@ export default function ProjectDetail() {
                     </h3>
                     <div className="flex items-center gap-2">
                       <Calendar size={16} />
-                      {formatDate(currentProject.created_at)}
+                      {formatDateFromNow(currentProject.createdAt)}
                     </div>
                   </div>
                   <div>
@@ -184,7 +177,7 @@ export default function ProjectDetail() {
                     </h3>
                     <div className="flex items-center gap-2">
                       <Calendar size={16} />
-                      {formatDate(currentProject.updated_at)}
+                      {formatDateFromNow(currentProject.updatedAt)}
                     </div>
                   </div>
                 </div>

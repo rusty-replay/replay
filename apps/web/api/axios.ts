@@ -78,8 +78,8 @@ axiosInstance.interceptors.response.use(
       // Access 토큰 만료 처리
       if (
         (errorCode === 'InvalidAuthToken' ||
-          errorCode === 'ExpiredAuthToken' ||
-          errorCode === 'NeedAuthToken') &&
+          errorCode === 'ExpiredAuthToken') &&
+        //errorCode === 'NeedAuthToken'
         !originalRequest._retry
       ) {
         if (isRefreshing) {

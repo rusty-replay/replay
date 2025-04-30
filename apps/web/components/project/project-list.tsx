@@ -25,24 +25,15 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import 'dayjs/locale/ko';
 import { PlusCircle, RefreshCw, ArrowRight, Calendar } from 'lucide-react';
-import { useGetProjectParams } from './hooks/use-get-project-params';
 import { useRouter } from 'next/navigation';
+import { formatDateFromNow } from '@/utils/date';
 
 dayjs.extend(relativeTime);
 dayjs.locale('ko');
 
 export default function ProjectList() {
   const router = useRouter();
-  const { projectId } = useGetProjectParams();
   const { data: projectList, isLoading, refetch } = useQueryProjectList();
-
-  const formatDate = (dateString: string) => {
-    try {
-      return dayjs(dateString).fromNow();
-    } catch (e) {
-      return dateString;
-    }
-  };
 
   return (
     <Card className="w-full">
@@ -53,7 +44,7 @@ export default function ProjectList() {
             전체 {projectList?.length || 0}개의 프로젝트가 있습니다
           </CardDescription>
         </div>
-        <Button className="flex items-center gap-2">
+        <Button size={'sm'} className="flex items-center gap-2">
           <PlusCircle size={16} />새 프로젝트
         </Button>
       </CardHeader>
@@ -94,13 +85,13 @@ export default function ProjectList() {
                   <TableCell className="text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <Calendar size={14} />
-                      {formatDate(project.created_at)}
+                      {formatDateFromNow(project.createdAt)}
                     </div>
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <Calendar size={14} />
-                      {formatDate(project.updated_at)}
+                      {formatDateFromNow(project.updatedAt)}
                     </div>
                   </TableCell>
                   <TableCell className="text-right">

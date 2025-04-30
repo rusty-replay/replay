@@ -1,4 +1,4 @@
-import { AdditionalInfo } from 'rusty-replay';
+import { AdditionalInfo } from '@workspace/rusty-replay/index';
 
 export interface EventReportResponse {
   id: number;
@@ -7,7 +7,7 @@ export interface EventReportResponse {
   appVersion: string;
   timestamp: string;
   groupHash: string;
-  replay: any;
+  replay: string;
   environment: string;
   browser: string | null;
   os: string | null;

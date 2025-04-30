@@ -1,8 +1,8 @@
-export interface Project {
+import { BaseTimeEntity } from '../types';
+
+export interface Project extends BaseTimeEntity {
   id: number;
   name: string;
   api_key: string;
   description: string;
-  created_at: string;
-  updated_at: string;
 }
