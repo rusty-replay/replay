@@ -24,9 +24,10 @@ import { Skeleton } from '@workspace/ui/components/skeleton';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import 'dayjs/locale/ko';
-import { PlusCircle, RefreshCw, ArrowRight, Calendar } from 'lucide-react';
+import { RefreshCw, ArrowRight, Calendar, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { formatDateFromNow } from '@/utils/date';
+import { CreateProject } from './create-project';
 
 dayjs.extend(relativeTime);
 dayjs.locale('ko');
@@ -44,9 +45,8 @@ export default function ProjectList() {
             전체 {projectList?.length || 0}개의 프로젝트가 있습니다
           </CardDescription>
         </div>
-        <Button size={'sm'} className="flex items-center gap-2">
-          <PlusCircle size={16} />새 프로젝트
-        </Button>
+
+        <CreateProject />
       </CardHeader>
       <CardContent>
         {isLoading ? (
