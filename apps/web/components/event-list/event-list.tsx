@@ -1,8 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useQueryErrorList } from '@/api/event/use-query-event-list';
-import { useRouter } from 'next/navigation';
+import React, { useReducer } from 'react';
 import {
   Card,
   CardContent,
@@ -41,10 +39,51 @@ import {
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { DateRange } from 'react-day-picker';
 import { EventReportListResponse } from '@/api/event/types';
+import { useQueryErrorList } from '@/api/event/use-query-event-list';
+import { useRouter } from 'next/navigation';
+import { DateRangePicker } from '@workspace/ui/components/calendars/date-range-picker';
 
 dayjs.extend(relativeTime);
 dayjs.locale('ko');
+
+type State = {
+  searchTerm: string;
+  filter: string;
+  page: number;
+  pageSize: number;
+  dateRange: DateRange | undefined;
+};
+
+type Action =
+  | { type: 'SET_SEARCH_TERM'; payload: string }
+  | { type: 'SET_FILTER'; payload: string }
+  | { type: 'SET_PAGE'; payload: number }
+  | { type: 'SET_DATE_RANGE'; payload: DateRange | undefined };
+
+const initialState: State = {
+  searchTerm: '',
+  filter: 'all',
+  page: 1,
+  pageSize: 10,
+  dateRange: undefined,
+};
+
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case 'SET_SEARCH_TERM':
+      return { ...state, searchTerm: action.payload, page: 1 };
+    case 'SET_FILTER':
+      return { ...state, filter: action.payload, page: 1 };
+    case 'SET_PAGE':
+      return { ...state, page: action.payload };
+    case 'SET_DATE_RANGE':
+      return { ...state, dateRange: action.payload, page: 1 };
+    default:
+      return state;
+  }
+}
 
 export default function EventList({
   projectId,
@@ -52,37 +91,29 @@ export default function EventList({
   projectId: number | undefined;
 }) {
   const router = useRouter();
+  const [state, dispatch] = useReducer(reducer, initialState);
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filter, setFilter] = useState('all');
+  console.log('state>>>', state);
 
   const { data: errorList, isLoading } = useQueryErrorList({
     projectId: projectId as number,
+    eventQuery: {
+      search: state.searchTerm,
+      page: state.page,
+      pageSize: state.pageSize,
+      startDate: state.dateRange?.from
+        ? dayjs(state.dateRange.from).startOf('day').toISOString()
+        : null,
+      endDate: state.dateRange?.to
+        ? dayjs(state.dateRange.to).endOf('day').toISOString()
+        : null,
+    },
     options: {
       enabled: !!projectId,
     },
   });
 
-  const filteredErrors: EventReportListResponse[] = errorList
-    ? errorList
-        .filter((error) => {
-          const matchesSearch =
-            searchTerm === '' ||
-            error.message.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            error.appVersion.includes(searchTerm) ||
-            error.groupHash.includes(searchTerm);
-
-          const matchesFilter =
-            filter === 'all' || (error as any).environment === filter;
-
-          return matchesSearch && matchesFilter;
-        })
-        .sort((a, b) => {
-          return (
-            new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-          );
-        })
-    : [];
+  console.log('errorList>>>', errorList);
 
   const formatTime = (timestamp: string) => {
     return dayjs(timestamp).fromNow();
@@ -104,16 +135,24 @@ export default function EventList({
 
         <CardContent>
           <div className="flex flex-col sm:flex-row justify-between mb-6 space-y-4 sm:space-y-0 sm:space-x-4">
-            <div className="relative w-full sm:w-2/3">
+            <div className="relative w-full sm:w-1/3">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="에러 메시지, 버전 또는 해시로 검색..."
                 className="pl-8"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                value={state.searchTerm}
+                onChange={(e) =>
+                  dispatch({ type: 'SET_SEARCH_TERM', payload: e.target.value })
+                }
               />
             </div>
-            <Select value={filter} onValueChange={setFilter}>
+
+            <Select
+              value={state.filter}
+              onValueChange={(val) =>
+                dispatch({ type: 'SET_FILTER', payload: val })
+              }
+            >
               <SelectTrigger className="w-full sm:w-1/3">
                 <SelectValue placeholder="환경 선택" />
               </SelectTrigger>
@@ -124,113 +163,131 @@ export default function EventList({
                 <SelectItem value="development">Development</SelectItem>
               </SelectContent>
             </Select>
+
+            <div className="w-full sm:w-1/3">
+              <DateRangePicker
+                dateRange={state.dateRange}
+                onDateRangeChange={(range) =>
+                  dispatch({ type: 'SET_DATE_RANGE', payload: range })
+                }
+              />
+            </div>
           </div>
 
           {isLoading ? (
             <div className="space-y-4">
-              <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-10 w-full" />
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className="h-10 w-full" />
+              ))}
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>시간</TableHead>
-                  <TableHead>에러</TableHead>
-                  <TableHead>기기</TableHead>
-                  <TableHead>버전</TableHead>
-                  <TableHead>리플레이</TableHead>
-                  <TableHead className="text-right">작업</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredErrors.length === 0 ? (
+            <>
+              <Table>
+                <TableHeader>
                   <TableRow>
-                    <TableCell colSpan={6} className="h-24 text-center">
-                      {errorList?.length === 0
-                        ? '아직 기록된 에러가 없습니다.'
-                        : '검색 조건에 맞는 에러가 없습니다.'}
-                    </TableCell>
+                    <TableHead>시간</TableHead>
+                    <TableHead>에러</TableHead>
+                    <TableHead>기기</TableHead>
+                    <TableHead>버전</TableHead>
+                    <TableHead>리플레이</TableHead>
+                    <TableHead className="text-right">작업</TableHead>
                   </TableRow>
-                ) : (
-                  filteredErrors.map((error) => (
-                    <TableRow key={error.id}>
-                      <TableCell className="whitespace-nowrap">
-                        <div className="flex items-center gap-2">
-                          <Clock size={14} />
-                          <span
-                            title={new Date(error.timestamp).toLocaleString()}
-                          >
-                            {formatTime(error.timestamp)}
-                          </span>
-                        </div>
+                </TableHeader>
+                <TableBody>
+                  {errorList?.content.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="h-24 text-center">
+                        검색 조건에 맞는 에러가 없습니다.
                       </TableCell>
-                      <TableCell>
-                        <div className="font-medium line-clamp-1 max-w-xs">
-                          {error.message}
-                        </div>
-                        <div className="text-xs text-muted-foreground mt-1">
-                          Hash: {error.groupHash}...
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
+                    </TableRow>
+                  ) : (
+                    errorList?.content.map((error) => (
+                      <TableRow key={error.id}>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Clock size={14} />
+                            <span title={error.timestamp}>
+                              {formatTime(error.timestamp)}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="font-medium line-clamp-1 max-w-xs">
+                            {error.message}
+                          </div>
+                          <div className="text-xs text-muted-foreground mt-1">
+                            Hash: {error.groupHash.slice(0, 8)}...
+                          </div>
+                        </TableCell>
+                        <TableCell>
                           {error.browser ? (
-                            <>
+                            <div className="flex items-center gap-2">
                               <Globe size={14} />
                               <span>
                                 {error.browser} / {error.os || 'Unknown'}
                               </span>
-                            </>
+                            </div>
                           ) : (
-                            <>
+                            <div className="flex items-center gap-2">
                               <Smartphone size={14} />
                               <span>앱</span>
-                            </>
+                            </div>
                           )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline">{error.appVersion}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        replay
-                        {/* {error.replay &&
-                        Array.isArray(error.replay) &&
-                        error.replay.length > 0 ? (
-                          <Badge
-                            variant="default"
-                            className="bg-green-100 text-green-800"
-                          >
-                            사용 가능
-                          </Badge>
-                        ) : (
-                          <Badge
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{error.appVersion}</Badge>
+                        </TableCell>
+                        <TableCell>
+                          {/* replay 처리 필요 시 여기에 */}
+                          <Badge variant="outline">없음</Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
                             variant="outline"
-                            className="text-muted-foreground"
+                            size="sm"
+                            onClick={() => navigateToDetail(error.id)}
                           >
-                            없음
-                          </Badge>
-                        )} */}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="flex items-center gap-1"
-                          onClick={() => navigateToDetail(error.id)}
-                        >
-                          상세보기
-                          <ArrowRight size={14} />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
+                            상세보기
+                            <ArrowRight size={14} />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+
+              <div className="flex justify-between items-center mt-6">
+                <span className="text-sm text-muted-foreground">
+                  전체 {errorList?.filteredElements ?? 0}건
+                </span>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={state.page === 1}
+                    onClick={() =>
+                      dispatch({ type: 'SET_PAGE', payload: state.page - 1 })
+                    }
+                  >
+                    이전
+                  </Button>
+                  <span className="text-sm">
+                    {state.page} / {errorList?.totalPages ?? 1}
+                  </span>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={!errorList?.hasNext}
+                    onClick={() =>
+                      dispatch({ type: 'SET_PAGE', payload: state.page + 1 })
+                    }
+                  >
+                    다음
+                  </Button>
+                </div>
+              </div>
+            </>
           )}
         </CardContent>
       </Card>

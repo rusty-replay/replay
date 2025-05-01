@@ -31,3 +31,11 @@ export interface EventReportListResponse {
   browser: string | null;
   os: string | null;
 }
+
+export interface EventQuery {
+  search: string | null;
+  page: number;
+  pageSize: number;
+  startDate: string | null;
+  endDate: string | null;
+}

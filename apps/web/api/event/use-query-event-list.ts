@@ -1,21 +1,40 @@
 import { useQuery } from '@tanstack/react-query';
-import { UseQueryCustomOptions } from '../types';
-import { EventReportListResponse } from './types';
+import { PaginatedResponse, UseQueryCustomOptions } from '../types';
+import { EventQuery, EventReportListResponse } from './types';
 import axiosInstance from '../axios';
 
 export function useQueryErrorList({
   projectId,
+  eventQuery,
   options,
 }: {
   projectId: number;
-  options?: UseQueryCustomOptions<void, EventReportListResponse[]>;
+  eventQuery: EventQuery;
+  options?: UseQueryCustomOptions<
+    void,
+    PaginatedResponse<EventReportListResponse>
+  >;
 }) {
-  const queryKey = `/api/projects/${projectId}/events`;
+  const queryParams = new URLSearchParams();
+
+  if (eventQuery.search) queryParams.append('search', eventQuery.search);
+  if (eventQuery.page) queryParams.append('page', String(eventQuery.page));
+  if (eventQuery.pageSize)
+    queryParams.append('pageSize', String(eventQuery.pageSize));
+  if (eventQuery.startDate)
+    queryParams.append('startDate', eventQuery.startDate);
+  if (eventQuery.endDate) queryParams.append('endDate', eventQuery.endDate);
+
+  const queryString = queryParams.toString();
+  const fullUrl = `/api/projects/${projectId}/events${queryString ? `?${queryString}` : ''}`;
+
+  const queryKey = [`/api/projects/${projectId}/events`, eventQuery];
+
   const queryFn = async () =>
-    await axiosInstance.get(queryKey).then((res) => res.data);
+    axiosInstance.get(fullUrl).then((res) => res.data);
 
   return useQuery({
-    queryKey: [queryKey],
+    queryKey,
     queryFn,
     ...options,
   });
