@@ -25,9 +25,20 @@ interface BaseTimeEntity {
   updatedAt: string;
 }
 
+interface PaginatedResponse<T> {
+  content: T[];
+  page: number;
+  pageSize: number;
+  totalElements: number;
+  filteredElements: number;
+  totalPages: number;
+  hasNext: boolean;
+}
+
 export type {
   ResponseError,
   UseMutationCustomOptions,
   UseQueryCustomOptions,
   BaseTimeEntity,
+  PaginatedResponse,
 };

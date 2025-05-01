@@ -3,7 +3,7 @@ import { UseQueryCustomOptions } from '../types';
 import { EventReportResponse } from './types';
 import axiosInstance from '../axios';
 
-export default function useQueryErrorDetail({
+export function useQueryEventDetail({
   projectId,
   issueId,
   options,

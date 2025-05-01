@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useQueryErrorList } from '@/api/error/use-query-error-list';
+import { useQueryErrorList } from '@/api/event/use-query-event-list';
 import { useRouter } from 'next/navigation';
 import {
   Card,
@@ -41,12 +41,12 @@ import {
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { EventReportListResponse } from '@/api/error/types';
+import { EventReportListResponse } from '@/api/event/types';
 
 dayjs.extend(relativeTime);
 dayjs.locale('ko');
 
-export default function ErrorList({
+export default function EventList({
   projectId,
 }: {
   projectId: number | undefined;

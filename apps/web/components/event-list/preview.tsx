@@ -39,7 +39,7 @@ import {
 } from 'lucide-react';
 import dayjs from 'dayjs';
 import { AdditionalInfo } from '@workspace/rusty-replay/index';
-import { EventReportResponse } from '@/api/error/types';
+import { EventReportResponse } from '@/api/event/types';
 import { formatDate } from '@/utils/date';
 
 export interface BackButtonProps {

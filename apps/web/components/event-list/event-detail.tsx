@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
-import useQueryErrorDetail from '@/api/error/use-query-error-detail';
+import { useQueryEventDetail } from '@/api/event/use-query-event-detail';
 import { useRouter } from 'next/navigation';
 import {
   Tabs,
@@ -30,7 +30,7 @@ interface ErrorDetailProps {
   };
 }
 
-export default function ErrorDetail({ params }: ErrorDetailProps) {
+export default function EventDetail({ params }: ErrorDetailProps) {
   const router = useRouter();
   const projectId = params.projectId;
   const issueId = params.issueId;
@@ -39,7 +39,7 @@ export default function ErrorDetail({ params }: ErrorDetailProps) {
   const [playerError, setPlayerError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('overview');
 
-  const { data: error, isLoading } = useQueryErrorDetail({
+  const { data: error, isLoading } = useQueryEventDetail({
     projectId: projectId as number,
     issueId: issueId as number,
     options: {
