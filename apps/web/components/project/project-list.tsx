@@ -76,7 +76,7 @@ export default function ProjectList() {
                   <TableCell className="font-medium">{project.name}</TableCell>
                   <TableCell>
                     <Badge variant="outline" className="font-mono">
-                      {project.api_key.substring(0, 8)}...
+                      {project.apiKey}
                     </Badge>
                   </TableCell>
                   <TableCell className="max-w-xs truncate">
@@ -94,7 +94,7 @@ export default function ProjectList() {
                       {formatDateFromNow(project.updatedAt)}
                     </div>
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="flex justify-end">
                     <Button
                       variant="outline"
                       size="sm"

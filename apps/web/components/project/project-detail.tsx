@@ -158,7 +158,7 @@ export default function ProjectDetail() {
                     <div className="flex items-center gap-2">
                       <KeyRound size={16} />
                       <Badge variant="outline" className="font-mono">
-                        {currentProject.api_key}
+                        {currentProject.apiKey}
                       </Badge>
                     </div>
                   </div>
