@@ -9,7 +9,7 @@ export interface Project extends BaseTimeEntity {
 
 export interface ProjectCreateRequest {
   name: string;
-  description: string | null;
+  description?: string | null;
 }
 
 export interface ProjectResponse extends BaseTimeEntity {

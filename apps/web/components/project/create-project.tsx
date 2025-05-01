@@ -1,19 +1,11 @@
 import { useBooleanState } from '@/hooks/use-boolean-state';
 import { Button } from '@workspace/ui/components/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from '@workspace/ui/components/dialog';
 import { Input } from '@workspace/ui/components/input';
 import { Textarea } from '@workspace/ui/components/textarea';
 import { Label } from '@workspace/ui/components/label';
 import { toast } from '@workspace/ui/components/sonner';
 import { Plus } from 'lucide-react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -21,6 +13,7 @@ import {
   CreateProjectSchemaType,
 } from '@/utils/schema/project.schema';
 import { useCreateProject } from '@/api/project/use-create-project';
+import { ConfirmationModal } from '@workspace/ui/components/dialogs/confirmation-modal';
 
 export function CreateProject() {
   const createState = useBooleanState();
@@ -35,7 +28,13 @@ export function CreateProject() {
     },
   });
 
-  console.log(form.watch());
+  useEffect(() => {
+    if (createState.isOpen) {
+      form.clearErrors();
+    }
+  }, [createState.isOpen]);
+
+  console.log('form.formState', form.formState.errors);
 
   const handleCreateProject = async (data: CreateProjectSchemaType) => {
     await createProject(data, {
@@ -51,7 +50,7 @@ export function CreateProject() {
   };
 
   return (
-    <Dialog open={createState.isOpen} onOpenChange={createState.toggle}>
+    <>
       <Button
         onClick={() => {
           createState.open();
@@ -63,62 +62,69 @@ export function CreateProject() {
         <Plus size={16} />새 프로젝트
       </Button>
 
-      <DialogContent className="sm:max-w-[425px]">
-        <form onSubmit={form.handleSubmit(handleCreateProject)}>
-          <DialogHeader>
-            <DialogTitle>새 프로젝트 생성</DialogTitle>
-            <DialogDescription>
-              새 프로젝트 정보를 입력하세요. 완료되면 저장 버튼을 클릭하세요.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
+      <ConfirmationModal
+        visible={createState.isOpen}
+        title="새 프로젝트 생성"
+        confirmLabel="저장하기"
+        cancelLabel="취소"
+        onConfirm={form.handleSubmit(handleCreateProject)}
+        onCancel={createState.close}
+        loading={isCreating}
+        size="md"
+        className="sm:max-w-[425px]"
+      >
+        <div>
+          <p className="text-sm text-gray-500 mb-4">
+            새 프로젝트 정보를 입력하세요. 완료되면 저장 버튼을 클릭하세요.
+          </p>
+          <div className="grid gap-4 py-2">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">
                 프로젝트명
               </Label>
-              <Controller
-                control={form.control}
-                name="name"
-                render={({ field }) => {
-                  return (
-                    <Input
-                      {...field}
-                      id={field.name}
-                      placeholder="프로젝트 이름을 입력하세요"
-                      className="col-span-3"
-                    />
-                  );
-                }}
-              />
+              <div className="col-span-3">
+                <Controller
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => {
+                    return (
+                      <Input
+                        {...field}
+                        id={field.name}
+                        placeholder="프로젝트 이름을 입력하세요"
+                        autoFocus
+                        aria-invalid={!!form.formState.errors.name}
+                        error={form.formState.errors.name?.message}
+                      />
+                    );
+                  }}
+                />
+              </div>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="description" className="text-right">
                 설명
               </Label>
-              <Controller
-                name="description"
-                control={form.control}
-                render={({ field }) => {
-                  return (
-                    <Textarea
-                      id={field.name}
-                      {...field}
-                      value={field.value ?? undefined}
-                      placeholder="프로젝트 설명을 입력하세요"
-                      className="col-span-3"
-                    />
-                  );
-                }}
-              />
+              <div className="col-span-3">
+                <Controller
+                  name="description"
+                  control={form.control}
+                  render={({ field }) => {
+                    return (
+                      <Textarea
+                        id={field.name}
+                        {...field}
+                        value={field.value ?? undefined}
+                        placeholder="프로젝트 설명을 입력하세요"
+                      />
+                    );
+                  }}
+                />
+              </div>
             </div>
           </div>
-          <DialogFooter>
-            <Button type="submit" disabled={isCreating}>
-              저장하기
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+        </div>
+      </ConfirmationModal>
+    </>
   );
 }
