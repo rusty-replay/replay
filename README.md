@@ -1,6 +1,6 @@
-## Rusty Replay란?
+# rusty replay
 
-**Rusty Replay**는 Sentry Replay와 같은 비싼 서비스의 한계를 해결하기 위해 개발된 오류 추적 및 세션 리플레이 솔루션입니다. 무제한 세션 캡처와 데이터 소유권을 가진 채 비용을 크게 절감할 수 있습니다.
+**rusty replay**는 Sentry와 같은 제한된 세션 리플레이를 해결하기 위해 개발된 오류 추적 및 세션 리플레이 솔루션입니다. 무제한 세션 캡처와 데이터 소유권을 가진 채 비용을 크게 절감할 수 있습니다.
 
 ## 주요 기능
 
@@ -63,15 +63,25 @@
 
 ## 기술 스택
 
-- **프론트엔드 SDK**: Next.js, TypeScript, rrweb
+- **프론트엔드 SDK**: TypeScript, rrweb
+- **프론트엔드 대시보드**: Next.js v15
 - **백엔드**: Rust, Actix-Web
 - **데이터베이스**: MySQL, SeaORM
 
 ```
 rusty-replay/
 ├── apps
-│   └── web           # 대시보드 프론트엔드 (Next.js)
+│   └── web          # Dashboard (Next.js + rrweb)
 ├── packages
-│   ├── rusty-replay  # 클라이언트 SDK (TypeScript)
-│   └── ui            # 공유 UI 컴포넌트
+│   ├── rusty-replay # SDK (TypeScript + rrweb)
+│   └── ui           # Shared UI components
 ```
+
+## 🦀 Backend Repository
+
+🔗 **GitHub 저장소**: [rusty-replay/replay-be](https://github.com/rusty-replay/replay-be)
+
+## 🕹️ SDK Repository
+
+📦 NPM 패키지: [`npm i rusty-replay`](https://www.npmjs.com/package/rusty-replay)
+📖 [SDK 사용법 바로가기](https://github.com/rusty-replay/replay/tree/main/packages/rusty-replay#readme)
