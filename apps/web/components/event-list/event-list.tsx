@@ -28,22 +28,21 @@ import {
   SelectValue,
 } from '@workspace/ui/components/select';
 import {
-  AlertCircle,
   Search,
   Clock,
   ArrowRight,
   Smartphone,
   Globe,
-  Calendar,
+  Play,
 } from 'lucide-react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { DateRange } from 'react-day-picker';
-import { EventReportListResponse } from '@/api/event/types';
 import { useQueryErrorList } from '@/api/event/use-query-event-list';
 import { useRouter } from 'next/navigation';
 import { DateRangePicker } from '@workspace/ui/components/calendars/date-range-picker';
+import { formatDate, formatDateFromNow } from '@/utils/date';
 
 dayjs.extend(relativeTime);
 dayjs.locale('ko');
@@ -66,7 +65,7 @@ const initialState: State = {
   searchTerm: '',
   filter: 'all',
   page: 1,
-  pageSize: 10,
+  pageSize: 30,
   dateRange: undefined,
 };
 
@@ -93,8 +92,6 @@ export default function EventList({
   const router = useRouter();
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  console.log('state>>>', state);
-
   const { data: errorList, isLoading } = useQueryErrorList({
     projectId: projectId as number,
     eventQuery: {
@@ -112,12 +109,6 @@ export default function EventList({
       enabled: !!projectId,
     },
   });
-
-  console.log('errorList>>>', errorList);
-
-  const formatTime = (timestamp: string) => {
-    return dayjs(timestamp).fromNow();
-  };
 
   const navigateToDetail = (issueId: number) => {
     router.push(`/project/${projectId}/issues/${issueId}`);
@@ -206,9 +197,13 @@ export default function EventList({
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <Clock size={14} />
-                            <span title={error.timestamp}>
-                              {formatTime(error.timestamp)}
-                            </span>
+                            <div
+                              title={error.timestamp}
+                              className="flex items-center gap-3"
+                            >
+                              <span>{formatDateFromNow(error.timestamp)}</span>
+                              <span>{formatDate(error.timestamp)}</span>
+                            </div>
                           </div>
                         </TableCell>
                         <TableCell>
@@ -216,7 +211,7 @@ export default function EventList({
                             {error.message}
                           </div>
                           <div className="text-xs text-muted-foreground mt-1">
-                            Hash: {error.groupHash.slice(0, 8)}...
+                            Hash: {error.groupHash}
                           </div>
                         </TableCell>
                         <TableCell>
@@ -238,8 +233,11 @@ export default function EventList({
                           <Badge variant="outline">{error.appVersion}</Badge>
                         </TableCell>
                         <TableCell>
-                          {/* replay 처리 필요 시 여기에 */}
-                          <Badge variant="outline">없음</Badge>
+                          {error.hasReplay ? (
+                            <Badge variant="outline">
+                              <Play />
+                            </Badge>
+                          ) : null}
                         </TableCell>
                         <TableCell className="text-right">
                           <Button

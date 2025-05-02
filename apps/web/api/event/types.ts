@@ -30,6 +30,7 @@ export interface EventReportListResponse {
   issueId: number | null;
   browser: string | null;
   os: string | null;
+  hasReplay: boolean;
 }
 
 export interface EventQuery {
