@@ -68,6 +68,10 @@
 - **백엔드**: Rust, Actix-Web
 - **데이터베이스**: MySQL, SeaORM
 
+
+### 🔄 flow chart
+<img width="500" alt="r-4" src="https://github.com/user-attachments/assets/652bebb0-2a5f-48c7-b9d5-bfe0221c7acc" />
+
 ```
 rusty-replay/
 ├── apps
