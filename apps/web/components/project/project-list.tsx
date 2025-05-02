@@ -62,7 +62,7 @@ export default function ProjectList() {
               <TableRow>
                 <TableHead className="w-16">ID</TableHead>
                 <TableHead>프로젝트명</TableHead>
-                <TableHead>API 키</TableHead>
+                {/* <TableHead>API 키</TableHead> */}
                 <TableHead>설명</TableHead>
                 <TableHead>생성일</TableHead>
                 <TableHead>수정일</TableHead>
@@ -74,11 +74,11 @@ export default function ProjectList() {
                 <TableRow key={project.id}>
                   <TableCell className="font-medium">{project.id}</TableCell>
                   <TableCell className="font-medium">{project.name}</TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     <Badge variant="outline" className="font-mono">
                       {project.apiKey}
                     </Badge>
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell className="max-w-xs truncate">
                     {project.description || '설명 없음'}
                   </TableCell>

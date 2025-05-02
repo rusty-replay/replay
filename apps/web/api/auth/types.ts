@@ -16,3 +16,10 @@ export interface RefreshTokenResponse {
   accessToken: string;
   refreshToken: string;
 }
+
+export interface UserResponse {
+  id: number;
+  username: string;
+  email: string;
+  role: string; // TODO
+}

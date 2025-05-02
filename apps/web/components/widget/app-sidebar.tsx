@@ -20,7 +20,6 @@ import {
   Zap,
 } from 'lucide-react';
 
-import { NavUser } from '@workspace/ui/components/nav-user';
 import { TeamSwitcher } from '@workspace/ui/components/team-switcher';
 import {
   Sidebar,
@@ -31,6 +30,8 @@ import {
 } from '@workspace/ui/components/sidebar';
 import { NavProjects } from './nav-projects';
 import { NavMain } from './nav-main';
+import { useQueryProfile } from '@/api/auth/use-query-profile';
+import { NavUser } from './nav-user';
 
 const data = {
   user: {
@@ -203,6 +204,8 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { data: profile, isPending: isPendingProfile } = useQueryProfile();
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -214,7 +217,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser profile={profile} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
