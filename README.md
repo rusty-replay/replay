@@ -28,32 +28,38 @@
 ### 프로젝트 상세보기
 
 <img width="500" alt="r-1" src="https://github.com/user-attachments/assets/459f4fd2-d074-4fd1-9a09-fe52ca05813f" />
-프로젝트의 모든 오류 이벤트를 종합적으로 볼 수 있는 대시보드
+
+- 프로젝트의 모든 오류 이벤트를 종합적으로 볼 수 있는 대시보드
 
 ### 프로젝트 이벤트 타임라인
 
 <img width="500" alt="r-2" src="https://github.com/user-attachments/assets/98437a01-ebe0-4235-bae3-e9a8b67373d1" />
-프로젝트에서 캡처된 모든 이벤트를 시간순으로 확인
+
+- 프로젝트에서 캡처된 모든 이벤트를 시간순으로 확인
 
 ### 이벤트 목록
 
 <img width="500" alt="r-3" src="https://github.com/user-attachments/assets/cc86a2ff-73b2-4a80-841c-d1b7952a35bf" />
-모든 이벤트를 한눈에 확인
+
+- 모든 이벤트를 한눈에 확인
 
 ### 이벤트 상세보기
 
 <img width="500" alt="r-4" src="https://github.com/user-attachments/assets/6cd280f1-f62e-4c4a-9eaa-36d63d805e68" />
-이벤트 발생 시간, API 정보, 스택 트레이스 등 자세한 정보를 확인
+
+- 이벤트 발생 시간, API 정보, 스택 트레이스 등 자세한 정보를 확인
 
 ### 스택 트레이스 분석
 
 <img width="500" alt="r-5" src="https://github.com/user-attachments/assets/63252d6f-a0fb-499b-9513-c614f58792d8" />
-오류가 발생한 정확한 위치와 원인을 파악
+
+- 오류가 발생한 정확한 위치와 원인을 파악
 
 ### 세션 리플레이
 
 <img width="500" alt="r-7" src="https://github.com/user-attachments/assets/7fb90cae-1b12-48a9-88e4-7e45cb707091" />
-오류 발생 전 사용자 활동을 재생하여 문제 상황 파악
+
+- 오류 발생 전 사용자 활동을 재생하여 문제 상황 파악
 
 ## 기술 스택
 
