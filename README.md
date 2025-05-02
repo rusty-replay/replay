@@ -1,1 +1,6 @@
-<!--ARCADE EMBED START--><div style="position: relative; padding-bottom: calc(77.84290738569753% + 41px); height: 0; width: 100%;"><iframe src="https://demo.arcade.software/H0fbDkxVrjdiu8iwbb5R?embed&embed_mobile=tab&embed_desktop=inline&show_copy_link=true" title="rusty replay" frameborder="0" loading="lazy" webkitallowfullscreen mozallowfullscreen allowfullscreen allow="clipboard-write" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; color-scheme: light;" ></iframe></div><!--ARCADE EMBED END-->
+<img width="974" alt="r-1" src="https://github.com/user-attachments/assets/459f4fd2-d074-4fd1-9a09-fe52ca05813f" />
+<img width="968" alt="r-2" src="https://github.com/user-attachments/assets/98437a01-ebe0-4235-bae3-e9a8b67373d1" />
+<img width="973" alt="r-3" src="https://github.com/user-attachments/assets/cc86a2ff-73b2-4a80-841c-d1b7952a35bf" />
+<img width="999" alt="r-4" src="https://github.com/user-attachments/assets/6cd280f1-f62e-4c4a-9eaa-36d63d805e68" />
+<img width="977" alt="r-5" src="https://github.com/user-attachments/assets/63252d6f-a0fb-499b-9513-c614f58792d8" />
+<img width="984" alt="r-7" src="https://github.com/user-attachments/assets/7fb90cae-1b12-48a9-88e4-7e45cb707091" />
