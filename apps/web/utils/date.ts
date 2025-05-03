@@ -1,6 +1,10 @@
 import dayjs from 'dayjs';
 
-export function formatDateFromNow(dateString: string) {
+export function formatDateFromNow(dateString: string | null) {
+  if (!dateString) {
+    return '';
+  }
+
   try {
     return dayjs(dateString).fromNow();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

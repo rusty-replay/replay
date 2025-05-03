@@ -1,6 +1,7 @@
 import { AdditionalInfo } from '@workspace/rusty-replay/index';
+import { BaseTimeEntity } from '../types';
 
-export interface EventReportResponse {
+export interface EventReportResponse extends BaseTimeEntity {
   id: number;
   message: string;
   stacktrace: string;
@@ -16,8 +17,6 @@ export interface EventReportResponse {
   projectId: number;
   issueId: number | null;
   additionalInfo: AdditionalInfo | null;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface EventReportListResponse {

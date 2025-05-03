@@ -22,7 +22,7 @@ type UseQueryCustomOptions<TQueryFnData = unknown, TData = TQueryFnData> = Omit<
 
 interface BaseTimeEntity {
   createdAt: string;
-  updatedAt: string;
+  updatedAt: string | null;
 }
 
 interface PaginatedResponse<T> {
