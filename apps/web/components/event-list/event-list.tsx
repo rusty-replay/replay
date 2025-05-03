@@ -111,6 +111,8 @@ export default function EventList({
     },
   });
 
+  console.log('errorList>>>', errorList);
+
   const navigateToDetail = (issueId: number) => {
     router.push(`/project/${projectId}/issues/${issueId}`);
   };
@@ -242,7 +244,12 @@ export default function EventList({
                           ) : null}
                         </TableCell>
                         <TableCell>
-                          <PriorityDropdownMenuCheckboxes />
+                          {/* {error.priority} */}
+                          <PriorityDropdownMenuCheckboxes
+                            priority={error.priority}
+                            projectId={projectId}
+                            eventId={error.id}
+                          />
                         </TableCell>
                       </TableRow>
                     ))

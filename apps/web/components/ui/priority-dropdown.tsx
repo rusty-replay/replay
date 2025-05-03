@@ -12,25 +12,61 @@ import {
 } from '@workspace/ui/components/dropdown-menu';
 import { SignalHigh, SignalMedium, SignalLow } from 'lucide-react';
 import { Badge } from '@workspace/ui/components/badge';
+import { EventPriorityType } from '@/api/event/types';
+import { useMutationEventPriority } from '@/api/event/use-mutation-event-priority';
+import { toast } from '@workspace/ui/components/sonner';
 
 type Checked = DropdownMenuCheckboxItemProps['checked'];
 
-export function PriorityDropdownMenuCheckboxes() {
-  const [priorityHigh, setPriorityHigh] = useState<Checked>(false);
-  const [priorityMed, setPriorityMed] = useState<Checked>(false);
-  const [priorityLow, setPriorityLow] = useState<Checked>(false);
+interface Props {
+  priority: EventPriorityType | null;
+  projectId: number | undefined;
+  eventId: number;
+}
+
+export function PriorityDropdownMenuCheckboxes({
+  priority,
+  projectId,
+  eventId,
+}: Props) {
+  const [priorityHigh, setPriorityHigh] = useState<Checked>(
+    priority === 'HIGH'
+  );
+  const [priorityMed, setPriorityMed] = useState<Checked>(priority === 'MED');
+  const [priorityLow, setPriorityLow] = useState<Checked>(priority === 'LOW');
+
+  const { mutateAsync: mutatePriority, isPending: isMutatingPriority } =
+    useMutationEventPriority({ projectId: projectId!, eventId });
+
+  const handlePriorityChange = async (priority: EventPriorityType) => {
+    await mutatePriority(
+      { priority },
+      {
+        onSuccess: () => {
+          setPriorityHigh(priority === 'HIGH');
+          setPriorityMed(priority === 'MED');
+          setPriorityLow(priority === 'LOW');
+          toast.success('Priority updated successfully!');
+        },
+        onError: (error) => {
+          console.error('Error updating priority:', error);
+          toast.error('Failed to update priority.');
+        },
+      }
+    );
+  };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline">Open</Button>
+        <Badge variant="outline">{priority}</Badge>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>Set Priority</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuCheckboxItem
           checked={priorityHigh}
-          onCheckedChange={setPriorityHigh}
+          onCheckedChange={() => handlePriorityChange('HIGH')}
           className="flex items-center gap-2"
         >
           <Badge variant={'secondary'}>
@@ -40,7 +76,7 @@ export function PriorityDropdownMenuCheckboxes() {
         </DropdownMenuCheckboxItem>
         <DropdownMenuCheckboxItem
           checked={priorityMed}
-          onCheckedChange={setPriorityMed}
+          onCheckedChange={() => handlePriorityChange('MED')}
           className="flex items-center gap-2"
         >
           <Badge variant={'secondary'}>
@@ -50,7 +86,7 @@ export function PriorityDropdownMenuCheckboxes() {
         </DropdownMenuCheckboxItem>
         <DropdownMenuCheckboxItem
           checked={priorityLow}
-          onCheckedChange={setPriorityLow}
+          onCheckedChange={() => handlePriorityChange('LOW')}
           className="flex items-center gap-2"
         >
           <Badge variant={'secondary'}>

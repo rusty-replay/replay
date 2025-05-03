@@ -30,6 +30,7 @@ export interface EventReportListResponse {
   browser: string | null;
   os: string | null;
   hasReplay: boolean;
+  priority: EventPriorityType | null;
 }
 
 export interface EventQuery {
@@ -39,3 +40,9 @@ export interface EventQuery {
   startDate: string | null;
   endDate: string | null;
 }
+
+export interface EventPriority {
+  priority: EventPriorityType;
+}
+
+export type EventPriorityType = 'HIGH' | 'MED' | 'LOW';
