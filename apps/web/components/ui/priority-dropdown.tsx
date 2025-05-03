@@ -1,6 +1,5 @@
 'use client';
 import { useState } from 'react';
-import { Button } from '@workspace/ui/components/button';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -10,7 +9,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
-import { SignalHigh, SignalMedium, SignalLow } from 'lucide-react';
+import {
+  SignalHigh,
+  SignalMedium,
+  SignalLow,
+  ArrowDown,
+  ChevronDown,
+} from 'lucide-react';
 import { Badge } from '@workspace/ui/components/badge';
 import { EventPriorityType } from '@/api/event/types';
 import { useMutationEventPriority } from '@/api/event/use-mutation-event-priority';
@@ -23,6 +28,19 @@ interface Props {
   projectId: number | undefined;
   eventId: number;
 }
+
+const PriorityIcon = ({ priority }: { priority: EventPriorityType | null }) => {
+  switch (priority) {
+    case 'HIGH':
+      return <SignalHigh className="h-4 w-4" />;
+    case 'MED':
+      return <SignalMedium className="h-4 w-4" />;
+    case 'LOW':
+      return <SignalLow className="h-4 w-4" />;
+    default:
+      return null;
+  }
+};
 
 export function PriorityDropdownMenuCheckboxes({
   priority,
@@ -59,7 +77,16 @@ export function PriorityDropdownMenuCheckboxes({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Badge variant="outline">{priority}</Badge>
+        <Badge
+          variant="secondary"
+          className="flex items-center gap-1 cursor-pointer"
+        >
+          <PriorityIcon priority={priority} />
+          {priority === 'HIGH' && 'High'}
+          {priority === 'MED' && 'Med'}
+          {priority === 'LOW' && 'Low'}
+          <ChevronDown />
+        </Badge>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>Set Priority</DropdownMenuLabel>
