@@ -43,6 +43,7 @@ import { useQueryErrorList } from '@/api/event/use-query-event-list';
 import { useRouter } from 'next/navigation';
 import { DateRangePicker } from '@workspace/ui/components/calendars/date-range-picker';
 import { formatDate, formatDateFromNow } from '@/utils/date';
+import { PriorityDropdownMenuCheckboxes } from '../ui/priority-dropdown';
 
 dayjs.extend(relativeTime);
 dayjs.locale('ko');
@@ -176,12 +177,12 @@ export default function EventList({
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>issue</TableHead>
                     <TableHead>시간</TableHead>
-                    <TableHead>에러</TableHead>
                     <TableHead>기기</TableHead>
-                    <TableHead>버전</TableHead>
+                    {/* <TableHead>버전</TableHead> */}
                     <TableHead>리플레이</TableHead>
-                    <TableHead className="text-right">작업</TableHead>
+                    <TableHead>Priority</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -194,6 +195,17 @@ export default function EventList({
                   ) : (
                     errorList?.content.map((error) => (
                       <TableRow key={error.id}>
+                        <TableCell
+                          className="cursor-pointer"
+                          onClick={() => navigateToDetail(error.id)}
+                        >
+                          <div className="font-medium line-clamp-1 max-w-xs">
+                            {error.message}
+                          </div>
+                          <div className="text-xs text-muted-foreground mt-1">
+                            Hash: {error.groupHash}
+                          </div>
+                        </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <Clock size={14} />
@@ -204,14 +216,6 @@ export default function EventList({
                               <span>{formatDateFromNow(error.timestamp)}</span>
                               <span>{formatDate(error.timestamp)}</span>
                             </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="font-medium line-clamp-1 max-w-xs">
-                            {error.message}
-                          </div>
-                          <div className="text-xs text-muted-foreground mt-1">
-                            Hash: {error.groupHash}
                           </div>
                         </TableCell>
                         <TableCell>
@@ -229,9 +233,7 @@ export default function EventList({
                             </div>
                           )}
                         </TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{error.appVersion}</Badge>
-                        </TableCell>
+
                         <TableCell>
                           {error.hasReplay ? (
                             <Badge variant="outline">
@@ -239,15 +241,8 @@ export default function EventList({
                             </Badge>
                           ) : null}
                         </TableCell>
-                        <TableCell className="text-right">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => navigateToDetail(error.id)}
-                          >
-                            상세보기
-                            <ArrowRight size={14} />
-                          </Button>
+                        <TableCell>
+                          <PriorityDropdownMenuCheckboxes />
                         </TableCell>
                       </TableRow>
                     ))
