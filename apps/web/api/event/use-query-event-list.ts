@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { PaginatedResponse, UseQueryCustomOptions } from '../types';
 import { EventQuery, EventReportListResponse } from './types';
 import axiosInstance from '../axios';
+import { eventKeys } from './keys';
 
 export function useQueryErrorList({
   projectId,
@@ -25,10 +26,10 @@ export function useQueryErrorList({
     queryParams.append('startDate', eventQuery.startDate);
   if (eventQuery.endDate) queryParams.append('endDate', eventQuery.endDate);
 
-  const queryString = queryParams.toString();
-  const fullUrl = `/api/projects/${projectId}/events${queryString ? `?${queryString}` : ''}`;
+  // const fullUrl = `/api/projects/${projectId}/events${queryString ? `?${queryString}` : ''}`;
+  const fullUrl = eventKeys.list(projectId, queryParams);
 
-  const queryKey = [`/api/projects/${projectId}/events`, eventQuery];
+  const queryKey = [eventKeys.list(projectId), eventQuery];
 
   const queryFn = async () =>
     axiosInstance.get(fullUrl).then((res) => res.data);

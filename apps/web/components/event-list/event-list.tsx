@@ -43,7 +43,9 @@ import { useQueryErrorList } from '@/api/event/use-query-event-list';
 import { useRouter } from 'next/navigation';
 import { DateRangePicker } from '@workspace/ui/components/calendars/date-range-picker';
 import { formatDate, formatDateFromNow } from '@/utils/date';
-import { PriorityDropdownMenuCheckboxes } from '../ui/priority-dropdown';
+import { PriorityDropdown } from '../ui/priority-dropdown';
+import { AssigneeDropdown } from '../ui/assignee-dropdown';
+import { useQueryProjectUsers } from '@/api/project/use-query-project-users';
 
 dayjs.extend(relativeTime);
 dayjs.locale('ko');
@@ -93,6 +95,8 @@ export default function EventList({
   const router = useRouter();
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  const { data: userList } = useQueryProjectUsers({ projectId: projectId! });
+
   const { data: errorList, isLoading } = useQueryErrorList({
     projectId: projectId as number,
     eventQuery: {
@@ -110,8 +114,6 @@ export default function EventList({
       enabled: !!projectId,
     },
   });
-
-  console.log('errorList>>>', errorList);
 
   const navigateToDetail = (issueId: number) => {
     router.push(`/project/${projectId}/issues/${issueId}`);
@@ -185,6 +187,7 @@ export default function EventList({
                     {/* <TableHead>버전</TableHead> */}
                     <TableHead>리플레이</TableHead>
                     <TableHead>Priority</TableHead>
+                    <TableHead>Assignee</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -244,11 +247,18 @@ export default function EventList({
                           ) : null}
                         </TableCell>
                         <TableCell>
-                          {/* {error.priority} */}
-                          <PriorityDropdownMenuCheckboxes
+                          <PriorityDropdown
                             priority={error.priority}
                             projectId={projectId}
                             eventId={error.id}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <AssigneeDropdown
+                            projectId={projectId}
+                            eventId={error.id}
+                            userList={userList}
+                            currentAssigneeId={error.assignedTo}
                           />
                         </TableCell>
                       </TableRow>

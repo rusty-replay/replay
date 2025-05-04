@@ -18,3 +18,11 @@ export interface ProjectResponse extends BaseTimeEntity {
   apiKey: string;
   description: string | null;
 }
+
+export interface ProjectMemberResponse {
+  userId: number;
+  username: string;
+  email: string;
+  role: string;
+  jointedAt: string;
+}

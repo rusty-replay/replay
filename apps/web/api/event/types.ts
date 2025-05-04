@@ -1,5 +1,6 @@
 import { AdditionalInfo } from '@workspace/rusty-replay/index';
-import { BaseTimeEntity } from '../types';
+import { BaseTimeEntity, PaginatedResponse } from '../types';
+import { QueryKey } from '@tanstack/react-query';
 
 export interface EventReportResponse extends BaseTimeEntity {
   id: number;
@@ -17,6 +18,8 @@ export interface EventReportResponse extends BaseTimeEntity {
   projectId: number;
   issueId: number | null;
   additionalInfo: AdditionalInfo | null;
+  priority: EventPriorityType | null;
+  assignedTo: number | null;
 }
 
 export interface EventReportListResponse {
@@ -31,6 +34,7 @@ export interface EventReportListResponse {
   os: string | null;
   hasReplay: boolean;
   priority: EventPriorityType | null;
+  assignedTo: number | null;
 }
 
 export interface EventQuery {
@@ -46,3 +50,14 @@ export interface EventPriority {
 }
 
 export type EventPriorityType = 'HIGH' | 'MED' | 'LOW';
+
+export interface EventAssignee {
+  assignedTo: number | null;
+}
+
+export interface EventAssigneeContext {
+  previousQueries: [
+    QueryKey,
+    PaginatedResponse<EventReportListResponse> | undefined,
+  ][];
+}

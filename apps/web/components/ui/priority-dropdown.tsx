@@ -42,11 +42,7 @@ const PriorityIcon = ({ priority }: { priority: EventPriorityType | null }) => {
   }
 };
 
-export function PriorityDropdownMenuCheckboxes({
-  priority,
-  projectId,
-  eventId,
-}: Props) {
+export function PriorityDropdown({ priority, projectId, eventId }: Props) {
   const [priorityHigh, setPriorityHigh] = useState<Checked>(
     priority === 'HIGH'
   );
