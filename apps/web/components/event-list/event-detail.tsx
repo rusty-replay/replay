@@ -211,6 +211,7 @@ export default function EventDetail({ params }: ErrorDetailProps) {
               formatStacktrace={formatStacktrace}
               hasReplay={hasReplay}
               setActiveTab={setActiveTab}
+              projectId={projectId}
             />
           </TabsContent>
 

@@ -5,7 +5,11 @@ import {
   QueryKey,
 } from '@tanstack/react-query';
 import { ResponseError } from '../types';
-import { EventPriority, EventReportListResponse } from './types';
+import {
+  EventPriority,
+  EventReportListResponse,
+  EventReportResponse,
+} from './types';
 import axiosInstance from '../axios';
 import { eventKeys } from './keys';
 import { PaginatedResponse } from '../types';
@@ -15,6 +19,7 @@ interface EventReportListContext {
     QueryKey,
     PaginatedResponse<EventReportListResponse> | undefined,
   ][];
+  previousDetailQuery: EventReportResponse | undefined;
 }
 
 export function useMutationEventPriority({
@@ -33,6 +38,8 @@ export function useMutationEventPriority({
 }) {
   const queryClient = useQueryClient();
   const mutationKey = eventKeys.priority(projectId, eventId);
+  const detailQueryKey = `/api/projects/${projectId}/events/${eventId}`;
+  const eventListQueryKey = eventKeys.list(projectId);
   const mutationFn = async (data: EventPriority) =>
     await axiosInstance.put(mutationKey, data).then((res) => res.data);
 
@@ -41,18 +48,25 @@ export function useMutationEventPriority({
     mutationFn,
     onMutate: async (newPriority) => {
       await queryClient.cancelQueries({
-        queryKey: [`/api/projects/${projectId}/events`],
+        queryKey: [eventListQueryKey],
+      });
+      await queryClient.cancelQueries({
+        queryKey: [detailQueryKey],
       });
 
       const previousQueries = queryClient.getQueriesData<
         PaginatedResponse<EventReportListResponse>
       >({
-        queryKey: [`/api/projects/${projectId}/events`],
+        queryKey: [eventListQueryKey],
       });
+
+      const previousDetailQuery = queryClient.getQueryData<EventReportResponse>(
+        [detailQueryKey]
+      );
 
       queryClient.setQueriesData<PaginatedResponse<EventReportListResponse>>(
         {
-          queryKey: [`/api/projects/${projectId}/events`],
+          queryKey: [eventListQueryKey],
         },
         (old) => {
           if (!old) return old;
@@ -68,7 +82,15 @@ export function useMutationEventPriority({
         }
       );
 
-      return { previousQueries };
+      queryClient.setQueryData<EventReportResponse>([detailQueryKey], (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          priority: newPriority.priority,
+        };
+      });
+
+      return { previousQueries, previousDetailQuery };
     },
     onError: (err, newPriority, context) => {
       if (context?.previousQueries) {
@@ -76,12 +98,11 @@ export function useMutationEventPriority({
           queryClient.setQueryData(queryKey, data);
         });
       }
+
+      if (context?.previousDetailQuery) {
+        queryClient.setQueryData([detailQueryKey], context.previousDetailQuery);
+      }
     },
-    // onSettled: () => {
-    //   queryClient.invalidateQueries({
-    //     queryKey: [`/api/projects/${projectId}/events`],
-    //   });
-    // },
     ...options,
   });
 }

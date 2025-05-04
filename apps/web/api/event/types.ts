@@ -60,4 +60,5 @@ export interface EventAssigneeContext {
     QueryKey,
     PaginatedResponse<EventReportListResponse> | undefined,
   ][];
+  previousDetailQuery: EventReportResponse | undefined;
 }

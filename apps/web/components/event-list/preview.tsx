@@ -36,11 +36,15 @@ import {
   Globe2,
   Send,
   CornerDownRight,
+  UserCircle,
 } from 'lucide-react';
 import dayjs from 'dayjs';
 import { AdditionalInfo } from '@workspace/rusty-replay/index';
 import { EventReportResponse } from '@/api/event/types';
 import { formatDate } from '@/utils/date';
+import { useQueryProjectUsers } from '@/api/project/use-query-project-users';
+import { PriorityDropdown } from '../ui/priority-dropdown';
+import { AssigneeDropdown } from '../ui/assignee-dropdown';
 
 export interface BackButtonProps {
   onClick: VoidFunction;
@@ -273,6 +277,7 @@ export interface OverviewTabProps {
   formatStacktrace: (stacktrace: string) => string;
   hasReplay: boolean;
   setActiveTab: (tab: string) => void;
+  projectId: number | undefined;
 }
 
 export const OverviewTab = ({
@@ -280,92 +285,150 @@ export const OverviewTab = ({
   formatStacktrace,
   hasReplay,
   setActiveTab,
-}: OverviewTabProps) => (
-  <Card>
-    <CardHeader>
-      <CardTitle className="text-xl font-bold text-red-600 flex items-center gap-2">
-        <AlertCircle size={20} />
-        {error.message}
-      </CardTitle>
-      <CardDescription>
-        Error ID: {error.id} | Group Hash: {error.groupHash}
-      </CardDescription>
-    </CardHeader>
+  projectId,
+}: OverviewTabProps) => {
+  const { data: userList } = useQueryProjectUsers({ projectId: projectId! });
 
-    <CardContent className="space-y-6">
-      {/* 기본 정보 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <BasicInfoItem label="발생 시간">
-          <div className="flex items-center gap-2">
-            <Calendar size={16} />
-            <span>{formatDate(error.timestamp)}</span>
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex justify-between items-start">
+          <div>
+            <CardTitle className="text-xl font-bold text-red-600 flex items-center gap-2">
+              <AlertCircle size={20} />
+              {error.message}
+            </CardTitle>
+            <CardDescription>
+              Error ID: {error.id} | Group Hash: {error.groupHash}
+            </CardDescription>
           </div>
-        </BasicInfoItem>
 
-        <BasicInfoItem label="앱 버전">
-          <Badge variant="outline">{error.appVersion}</Badge>
-        </BasicInfoItem>
+          <div className="flex items-center gap-3">
+            <PriorityDropdown
+              priority={error.priority}
+              projectId={projectId}
+              eventId={error.id}
+            />
+            <AssigneeDropdown
+              projectId={projectId}
+              eventId={error.id}
+              userList={userList}
+              currentAssigneeId={error.assignedTo}
+            />
+          </div>
+        </div>
+      </CardHeader>
 
-        {error.browser && (
-          <BasicInfoItem label="브라우저">
+      <CardContent className="space-y-6">
+        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+          <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
+            <UserCircle size={16} />
+            이슈 관리
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h4 className="text-sm font-medium text-muted-foreground mb-1">
+                우선순위
+              </h4>
+              <PriorityDropdown
+                priority={error.priority}
+                projectId={projectId}
+                eventId={error.id}
+              />
+            </div>
+            <div>
+              <h4 className="text-sm font-medium text-muted-foreground mb-1">
+                담당자
+              </h4>
+              <AssigneeDropdown
+                projectId={projectId}
+                eventId={error.id}
+                userList={userList}
+                currentAssigneeId={error.assignedTo}
+              />
+            </div>
+          </div>
+        </div>
+
+        <Separator />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <BasicInfoItem label="발생 시간">
             <div className="flex items-center gap-2">
-              <Globe size={16} />
-              <span>{error.browser}</span>
+              <Calendar size={16} />
+              <span>{formatDate(error.timestamp)}</span>
             </div>
           </BasicInfoItem>
-        )}
 
-        {error.os && (
-          <BasicInfoItem label="운영체제">
-            <div className="flex items-center gap-2">
-              <Smartphone size={16} />
-              <span>{error.os}</span>
-            </div>
+          <BasicInfoItem label="앱 버전">
+            <Badge variant="outline">{error.appVersion}</Badge>
           </BasicInfoItem>
-        )}
 
-        <BasicInfoItem label="이슈 ID">
-          <Badge variant="secondary">{error.issueId}</Badge>
-        </BasicInfoItem>
-
-        <BasicInfoItem label="세션 리플레이">
-          {hasReplay ? (
-            <Badge variant="outline" className="bg-green-100 text-green-800">
-              사용 가능 ({error.replay.length}개 이벤트)
-            </Badge>
-          ) : (
-            <Badge variant="outline" className="text-muted-foreground">
-              없음
-            </Badge>
+          {error.browser && (
+            <BasicInfoItem label="브라우저">
+              <div className="flex items-center gap-2">
+                <Globe size={16} />
+                <span>{error.browser}</span>
+              </div>
+            </BasicInfoItem>
           )}
-        </BasicInfoItem>
-      </div>
 
-      <Separator />
+          {error.os && (
+            <BasicInfoItem label="운영체제">
+              <div className="flex items-center gap-2">
+                <Smartphone size={16} />
+                <span>{error.os}</span>
+              </div>
+            </BasicInfoItem>
+          )}
 
-      <AdditionalInfoSection additionalInfo={error.additionalInfo} />
+          <BasicInfoItem label="이슈 ID">
+            <Badge variant="secondary">{error.issueId}</Badge>
+          </BasicInfoItem>
 
-      <StacktracePreview stacktrace={error.stacktrace} />
-    </CardContent>
+          <BasicInfoItem label="세션 리플레이">
+            {hasReplay ? (
+              <Badge variant="outline" className="bg-green-100 text-green-800">
+                사용 가능 ({error.replay.length}개 이벤트)
+              </Badge>
+            ) : (
+              <Badge variant="outline" className="text-muted-foreground">
+                없음
+              </Badge>
+            )}
+          </BasicInfoItem>
+        </div>
 
-    <CardFooter className="flex justify-between">
-      <Button variant="outline" size="sm" onClick={() => window.history.back()}>
-        뒤로 가기
-      </Button>
-      {hasReplay && (
+        <Separator />
+
+        <AdditionalInfoSection additionalInfo={error.additionalInfo} />
+
+        <StacktracePreview stacktrace={error.stacktrace} />
+      </CardContent>
+
+      <CardFooter className="flex justify-between">
         <Button
-          variant="default"
+          variant="outline"
           size="sm"
-          className="flex items-center gap-2"
-          onClick={() => setActiveTab('replay')}
+          onClick={() => window.history.back()}
         >
-          <Video size={16} />
-          세션 리플레이 보기
+          뒤로 가기
         </Button>
-      )}
-    </CardFooter>
-  </Card>
-);
+        {hasReplay && (
+          <Button
+            variant="default"
+            size="sm"
+            className="flex items-center gap-2"
+            onClick={() => setActiveTab('replay')}
+          >
+            <Video size={16} />
+            세션 리플레이 보기
+          </Button>
+        )}
+      </CardFooter>
+    </Card>
+  );
+};
 
 export interface StacktraceTabProps {
   error: EventReportResponse;
