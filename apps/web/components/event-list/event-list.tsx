@@ -34,10 +34,7 @@ import 'dayjs/locale/ko';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { DateRange } from 'react-day-picker';
 import { useQueryErrorList } from '@/api/event/use-query-event-list';
-import {
-  useMutationEventPriority,
-  BatchEventPriority,
-} from '@/api/event/use-mutation-event-priority';
+import { useMutationEventPriority } from '@/api/event/use-mutation-event-priority';
 import { useRouter } from 'next/navigation';
 import { DateRangePicker } from '@workspace/ui/components/calendars/date-range-picker';
 import { formatDate, formatDateFromNow } from '@/utils/date';

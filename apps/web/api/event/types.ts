@@ -81,3 +81,11 @@ export interface EventStatusContext {
   ][];
   previousDetailQuery: EventReportResponse | undefined;
 }
+
+export interface EventReportListContext {
+  previousQueries: [
+    QueryKey,
+    PaginatedResponse<EventReportListResponse> | undefined,
+  ][];
+  previousDetailQueries: Record<number, EventReportResponse | undefined>;
+}

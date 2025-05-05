@@ -5,23 +5,15 @@ import {
   QueryKey,
 } from '@tanstack/react-query';
 import { ResponseError } from '../types';
-import { EventReportListResponse, EventReportResponse } from './types';
+import {
+  EventPriority,
+  EventReportListContext,
+  EventReportListResponse,
+  EventReportResponse,
+} from './types';
 import axiosInstance from '../axios';
 import { eventKeys } from './keys';
 import { PaginatedResponse } from '../types';
-
-export interface BatchEventPriority {
-  eventIds: number[];
-  priority: 'HIGH' | 'MED' | 'LOW';
-}
-
-interface EventReportListContext {
-  previousQueries: [
-    QueryKey,
-    PaginatedResponse<EventReportListResponse> | undefined,
-  ][];
-  previousDetailQueries: Record<number, EventReportResponse | undefined>;
-}
 
 export function useMutationEventPriority({
   projectId,
@@ -31,19 +23,14 @@ export function useMutationEventPriority({
   options?: UseMutationOptions<
     EventReportListResponse[],
     ResponseError,
-    BatchEventPriority,
+    EventPriority,
     EventReportListContext
   >;
 }) {
   const queryClient = useQueryClient();
   const listQueryKey = eventKeys.list(projectId);
 
-  return useMutation<
-    EventReportListResponse[],
-    ResponseError,
-    BatchEventPriority,
-    EventReportListContext
-  >({
+  return useMutation({
     mutationKey: [eventKeys.priority(projectId)],
     mutationFn: (data) =>
       axiosInstance
@@ -84,7 +71,7 @@ export function useMutationEventPriority({
       );
 
       eventIds.forEach((id) => {
-        const detailKey = [`/api/projects/${projectId}/events/${id}`];
+        const detailKey = [eventKeys.detail(projectId, id)];
         queryClient.setQueryData<EventReportResponse>(detailKey, (old) => {
           if (!old) return old;
           return { ...old, priority };
