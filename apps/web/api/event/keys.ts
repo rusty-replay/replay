@@ -10,4 +10,6 @@ export const eventKeys = {
     `/api/projects/${projectId}/events/${eventId}/priority`,
   assignee: (projectId: number, eventId: number) =>
     `/api/projects/${projectId}/events/${eventId}/assignee`,
+  status: (projectId: number, eventId: number) =>
+    `/api/projects/${projectId}/events/${eventId}/status`,
 };

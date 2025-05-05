@@ -20,6 +20,7 @@ export interface EventReportResponse extends BaseTimeEntity {
   additionalInfo: AdditionalInfo | null;
   priority: EventPriorityType | null;
   assignedTo: number | null;
+  status: EventStatusType;
 }
 
 export interface EventReportListResponse {
@@ -35,6 +36,7 @@ export interface EventReportListResponse {
   hasReplay: boolean;
   priority: EventPriorityType | null;
   assignedTo: number | null;
+  status: EventStatusType;
 }
 
 export interface EventQuery {
@@ -50,12 +52,25 @@ export interface EventPriority {
 }
 
 export type EventPriorityType = 'HIGH' | 'MED' | 'LOW';
+export type EventStatusType = 'RESOLVED' | 'UNRESOLVED';
 
 export interface EventAssignee {
   assignedTo: number | null;
 }
 
+export interface EventStatus {
+  status: EventStatusType;
+}
+
 export interface EventAssigneeContext {
+  previousQueries: [
+    QueryKey,
+    PaginatedResponse<EventReportListResponse> | undefined,
+  ][];
+  previousDetailQuery: EventReportResponse | undefined;
+}
+
+export interface EventStatusContext {
   previousQueries: [
     QueryKey,
     PaginatedResponse<EventReportListResponse> | undefined,

@@ -3,18 +3,18 @@ import {
   UseMutationOptions,
   useQueryClient,
 } from '@tanstack/react-query';
-import { eventKeys } from './keys';
-import { PaginatedResponse, ResponseError } from '../types';
 import {
-  EventAssignee,
-  EventAssigneeContext,
   EventReportListResponse,
   EventReportResponse,
+  EventStatus,
+  EventStatusContext,
 } from './types';
+import { PaginatedResponse, ResponseError } from '../types';
+import { eventKeys } from './keys';
 import axiosInstance from '../axios';
 import { toast } from '@workspace/ui/components/sonner';
 
-export function useMutationEventAssignee({
+export function useMutationEventStatus({
   projectId,
   eventId,
   options,
@@ -24,21 +24,21 @@ export function useMutationEventAssignee({
   options?: UseMutationOptions<
     EventReportListResponse,
     ResponseError,
-    EventAssignee,
-    EventAssigneeContext
+    EventStatus,
+    EventStatusContext
   >;
 }) {
   const queryClient = useQueryClient();
   const queryKey = eventKeys.list(projectId);
   const detailQueryKey = `/api/projects/${projectId}/events/${eventId}`;
-  const mutationKey = eventKeys.assignee(projectId, eventId);
-  const mutationFn = async (data: EventAssignee) =>
+  const mutationKey = eventKeys.status(projectId, eventId);
+  const mutationFn = async (data: EventStatus) =>
     await axiosInstance.put(mutationKey, data).then((res) => res.data);
 
   return useMutation({
     mutationKey: [mutationKey],
     mutationFn,
-    onMutate: async (newAssignee) => {
+    onMutate: async (newStatus) => {
       await queryClient.cancelQueries({
         queryKey: [queryKey],
       });
@@ -67,7 +67,7 @@ export function useMutationEventAssignee({
             ...old,
             content: old.content.map((event) =>
               event.id === eventId
-                ? { ...event, assignedTo: newAssignee.assignedTo }
+                ? { ...event, status: newStatus.status }
                 : event
             ),
           };
@@ -78,13 +78,13 @@ export function useMutationEventAssignee({
         if (!old) return old;
         return {
           ...old,
-          assignedTo: newAssignee.assignedTo,
+          status: newStatus.status,
         };
       });
 
       return { previousQueries, previousDetailQuery };
     },
-    onError: (err, newAssignee, context) => {
+    onError: (err, newStatus, context) => {
       if (context?.previousQueries) {
         context.previousQueries.forEach(([queryKey, data]) => {
           queryClient.setQueryData(queryKey, data);
@@ -96,7 +96,7 @@ export function useMutationEventAssignee({
       }
 
       console.error(err);
-      toast.error('Failed to update assignee');
+      toast.error('Failed to update status');
     },
     ...options,
   });

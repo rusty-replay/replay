@@ -12,7 +12,7 @@ import {
 import { ChevronDown, Search, Plus, UserCircle } from 'lucide-react';
 import { Badge } from '@workspace/ui/components/badge';
 import { toast } from '@workspace/ui/components/sonner';
-import useMutationEventAssignee from '@/api/event/use-mutation-event-assignee';
+import { useMutationEventAssignee } from '@/api/event/use-mutation-event-assignee';
 import { ProjectMemberResponse } from '@/api/project/types';
 import { Input } from '@workspace/ui/components/input';
 import { getAvatarColor, getInitials } from '@/utils/avatar';
