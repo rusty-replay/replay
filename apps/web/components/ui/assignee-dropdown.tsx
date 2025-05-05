@@ -56,7 +56,7 @@ export function AssigneeDropdown({
       const newAssigneeId = isCurrentlySelected ? null : userId;
 
       await mutateAssign(
-        { assignedTo: newAssigneeId },
+        { assignedTo: newAssigneeId, eventIds: [eventId] },
         {
           onSuccess: () => {
             toast.success(

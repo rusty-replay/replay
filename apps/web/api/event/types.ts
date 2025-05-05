@@ -47,19 +47,22 @@ export interface EventQuery {
   endDate: string | null;
 }
 
-export interface EventPriority {
+interface EventIds {
   eventIds: number[];
+}
+
+export interface EventPriority extends EventIds {
   priority: EventPriorityType;
 }
 
 export type EventPriorityType = 'HIGH' | 'MED' | 'LOW';
 export type EventStatusType = 'RESOLVED' | 'UNRESOLVED';
 
-export interface EventAssignee {
+export interface EventAssignee extends EventIds {
   assignedTo: number | null;
 }
 
-export interface EventStatus {
+export interface EventStatus extends EventIds {
   status: EventStatusType;
 }
 

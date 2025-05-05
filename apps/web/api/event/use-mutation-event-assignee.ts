@@ -31,7 +31,7 @@ export function useMutationEventAssignee({
   const queryClient = useQueryClient();
   const queryKey = eventKeys.list(projectId);
   const detailQueryKey = `/api/projects/${projectId}/events/${eventId}`;
-  const mutationKey = eventKeys.assignee(projectId, eventId);
+  const mutationKey = eventKeys.assignee(projectId);
   const mutationFn = async (data: EventAssignee) =>
     await axiosInstance.put(mutationKey, data).then((res) => res.data);
 
