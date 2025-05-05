@@ -31,7 +31,7 @@ export function useMutationEventStatus({
   const queryClient = useQueryClient();
   const queryKey = eventKeys.list(projectId);
   const detailQueryKey = `/api/projects/${projectId}/events/${eventId}`;
-  const mutationKey = eventKeys.status(projectId, eventId);
+  const mutationKey = eventKeys.status(projectId);
   const mutationFn = async (data: EventStatus) =>
     await axiosInstance.put(mutationKey, data).then((res) => res.data);
 
