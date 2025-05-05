@@ -6,8 +6,7 @@ export const eventKeys = {
     }
     return baseUrl;
   },
-  priority: (projectId: number, eventId: number) =>
-    `/api/projects/${projectId}/events/${eventId}/priority`,
+  priority: (projectId: number) => `/api/projects/${projectId}/events/priority`,
   assignee: (projectId: number, eventId: number) =>
     `/api/projects/${projectId}/events/${eventId}/assignee`,
   status: (projectId: number, eventId: number) =>

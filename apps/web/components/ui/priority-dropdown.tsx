@@ -54,7 +54,7 @@ export function PriorityDropdown({ priority, projectId, eventId }: Props) {
 
   const handlePriorityChange = async (priority: EventPriorityType) => {
     await mutatePriority(
-      { priority },
+      { priority, eventIds: [eventId] },
       {
         onSuccess: () => {
           setPriorityHigh(priority === 'HIGH');

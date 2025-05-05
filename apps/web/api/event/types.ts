@@ -48,6 +48,7 @@ export interface EventQuery {
 }
 
 export interface EventPriority {
+  eventIds: number[];
   priority: EventPriorityType;
 }
 

@@ -30,14 +30,14 @@ export function useMutationEventPriority({
   projectId: number;
   eventId: number;
   options?: UseMutationOptions<
-    EventReportListResponse,
+    EventReportListResponse[],
     ResponseError,
     EventPriority,
     EventReportListContext
   >;
 }) {
   const queryClient = useQueryClient();
-  const mutationKey = eventKeys.priority(projectId, eventId);
+  const mutationKey = eventKeys.priority(projectId);
   const detailQueryKey = `/api/projects/${projectId}/events/${eventId}`;
   const eventListQueryKey = eventKeys.list(projectId);
   const mutationFn = async (data: EventPriority) =>
