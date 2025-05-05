@@ -12,6 +12,7 @@ import { Label } from '@workspace/ui/components/label';
 import { useSignIn } from '@/api/auth/use-sign-in';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { routes } from '@/constants/routes';
 
 export function LoginForm({
   className,
@@ -34,7 +35,7 @@ export function LoginForm({
       {
         onSuccess: (data) => {
           console.log('Login successful', data);
-          router.push('/');
+          router.push(routes.home());
         },
         onError: (error) => {
           console.error('Login failed', error);

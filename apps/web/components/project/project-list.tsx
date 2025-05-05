@@ -28,6 +28,7 @@ import { RefreshCw, ArrowRight, Calendar, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { formatDateFromNow } from '@/utils/date';
 import { CreateProject } from './create-project';
+import { routes } from '@/constants/routes';
 
 dayjs.extend(relativeTime);
 dayjs.locale('ko');
@@ -100,7 +101,7 @@ export default function ProjectList() {
                       size="sm"
                       className="flex items-center gap-1"
                       onClick={() => {
-                        router.push(`/project/${project.id}`);
+                        router.push(routes.project.detail(project.id));
                       }}
                     >
                       상세보기

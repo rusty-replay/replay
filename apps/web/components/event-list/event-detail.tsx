@@ -22,6 +22,7 @@ import {
   ReplayTab,
 } from './preview';
 import { decompressFromBase64 } from '@workspace/rusty-replay/index';
+import { routes } from '@/constants/routes';
 
 interface ErrorDetailProps {
   params: {
@@ -158,7 +159,7 @@ export default function EventDetail({ params }: ErrorDetailProps) {
   };
 
   const goBack = () => {
-    router.push(`/project/${projectId}/issues`);
+    router.push(routes.event.list(projectId as number));
   };
 
   const formatStacktrace = (stacktrace: string) => {

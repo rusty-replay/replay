@@ -36,6 +36,7 @@ import 'dayjs/locale/ko';
 import ProjectList from './project-list';
 import { useRouter } from 'next/navigation';
 import { formatDateFromNow } from '@/utils/date';
+import { routes } from '@/constants/routes';
 
 dayjs.locale('ko');
 
@@ -65,7 +66,7 @@ export default function ProjectDetail() {
           variant="outline"
           size="sm"
           onClick={() => {
-            router.push('/project');
+            router.push(routes.project.list());
           }}
         >
           <ArrowLeft size={16} className="mr-2" />
@@ -76,7 +77,7 @@ export default function ProjectDetail() {
           variant="outline"
           size="sm"
           onClick={() => {
-            router.push(`/project/${projectId}/issues`);
+            router.push(routes.event.list(projectId));
           }}
         >
           <Shield size={16} className="mr-2" />

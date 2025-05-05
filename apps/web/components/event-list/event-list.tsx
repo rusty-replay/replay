@@ -44,6 +44,7 @@ import { AssigneeDropdown } from '../ui/assignee-dropdown';
 import { useQueryProjectUsers } from '@/api/project/use-query-project-users';
 import { EventPriorityType, EventStatusType } from '@/api/event/types';
 import { EventStatusDropdown } from '../ui/event-status-dropdown';
+import { routes } from '@/constants/routes';
 
 dayjs.extend(relativeTime);
 dayjs.locale('ko');
@@ -149,9 +150,7 @@ export default function EventList({ projectId }: { projectId?: number }) {
   };
 
   const navigateToDetail = (issueId: number) => {
-    console.log('issueId>>>', issueId);
-
-    router.push(`/project/${projectId}/issues/${issueId}`);
+    router.push(routes.event.detail(projectId!, issueId));
   };
 
   return (
