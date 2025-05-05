@@ -29,13 +29,14 @@ export function useMutationEventPriority({
 }) {
   const queryClient = useQueryClient();
   const listQueryKey = eventKeys.list(projectId);
+  const mutationFn = (data: EventPriority) =>
+    axiosInstance
+      .put(eventKeys.priority(projectId), data)
+      .then((res) => res.data);
 
   return useMutation({
     mutationKey: [eventKeys.priority(projectId)],
-    mutationFn: (data) =>
-      axiosInstance
-        .put(eventKeys.priority(projectId), data)
-        .then((res) => res.data),
+    mutationFn,
     onMutate: async (newData) => {
       const { eventIds, priority } = newData;
 

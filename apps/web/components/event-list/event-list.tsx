@@ -35,13 +35,15 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { DateRange } from 'react-day-picker';
 import { useQueryErrorList } from '@/api/event/use-query-event-list';
 import { useMutationEventPriority } from '@/api/event/use-mutation-event-priority';
+import { useMutationEventStatus } from '@/api/event/use-mutation-event-status';
 import { useRouter } from 'next/navigation';
 import { DateRangePicker } from '@workspace/ui/components/calendars/date-range-picker';
 import { formatDate, formatDateFromNow } from '@/utils/date';
 import { PriorityDropdown } from '../ui/priority-dropdown';
 import { AssigneeDropdown } from '../ui/assignee-dropdown';
 import { useQueryProjectUsers } from '@/api/project/use-query-project-users';
-import { EventPriorityType } from '@/api/event/types';
+import { EventPriorityType, EventStatusType } from '@/api/event/types';
+import { EventStatusDropdown } from '../ui/event-status-dropdown';
 
 dayjs.extend(relativeTime);
 dayjs.locale('ko');
@@ -86,10 +88,10 @@ function reducer(state: State, action: Action): State {
 export default function EventList({ projectId }: { projectId?: number }) {
   const router = useRouter();
   const [state, dispatch] = useReducer(reducer, initialState);
+
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
-  const [batchPriority, setBatchPriority] = useState<
-    EventPriorityType | undefined
-  >(undefined);
+  const [batchPriority, setBatchPriority] = useState<EventPriorityType>();
+  const [batchStatus, setBatchStatus] = useState<EventStatusType>();
 
   const { data: userList } = useQueryProjectUsers({ projectId: projectId! });
 
@@ -109,10 +111,10 @@ export default function EventList({ projectId }: { projectId?: number }) {
     options: { enabled: !!projectId },
   });
 
-  const { mutateAsync: mutatePriority, isPending: isMutating } =
-    useMutationEventPriority({
-      projectId: projectId!,
-    });
+  const { mutateAsync: mutatePriority, isPending: isMutatingPriority } =
+    useMutationEventPriority({ projectId: projectId! });
+  const { mutateAsync: mutateStatus, isPending: isMutatingStatus } =
+    useMutationEventStatus({ projectId: projectId! });
 
   const toggleSelect = (id: number) => {
     setSelectedIds((prev) => {
@@ -121,7 +123,6 @@ export default function EventList({ projectId }: { projectId?: number }) {
       return next;
     });
   };
-
   const toggleAll = (checked: boolean) => {
     if (checked && errorList) {
       setSelectedIds(new Set(errorList.content.map((e) => e.id)));
@@ -130,25 +131,32 @@ export default function EventList({ projectId }: { projectId?: number }) {
     }
   };
 
-  const handleApplyPriority = async () => {
+  const applyBatchPriority = async () => {
     if (batchPriority && selectedIds.size > 0) {
       await mutatePriority(
         { eventIds: Array.from(selectedIds), priority: batchPriority },
-        {
-          onSuccess: () => {
-            setSelectedIds(new Set());
-          },
-        }
+        { onSuccess: () => setSelectedIds(new Set()) }
+      );
+    }
+  };
+  const applyBatchStatus = async () => {
+    if (batchStatus && selectedIds.size > 0) {
+      await mutateStatus(
+        { eventIds: Array.from(selectedIds), status: batchStatus },
+        { onSuccess: () => setSelectedIds(new Set()) }
       );
     }
   };
 
   const navigateToDetail = (issueId: number) => {
+    console.log('issueId>>>', issueId);
+
     router.push(`/project/${projectId}/issues/${issueId}`);
   };
 
   return (
     <div className="space-y-6">
+      {/* 검색 / 필터 바 */}
       <div className="flex flex-col sm:flex-row justify-between mb-6 space-y-4 sm:space-y-0 sm:space-x-4">
         <div className="relative w-full sm:w-1/3">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -161,7 +169,6 @@ export default function EventList({ projectId }: { projectId?: number }) {
             }
           />
         </div>
-
         <Select
           value={state.filter}
           onValueChange={(val) =>
@@ -178,7 +185,6 @@ export default function EventList({ projectId }: { projectId?: number }) {
             <SelectItem value="development">Development</SelectItem>
           </SelectContent>
         </Select>
-
         <div className="w-full sm:w-1/3">
           <DateRangePicker
             dateRange={state.dateRange}
@@ -206,12 +212,13 @@ export default function EventList({ projectId }: { projectId?: number }) {
             </div>
           ) : (
             <>
+              {/* 배치 액션 바 */}
               {selectedIds.size > 0 && (
                 <div className="flex items-center space-x-2 mb-4">
                   <Select
                     value={batchPriority}
-                    onValueChange={(val) =>
-                      setBatchPriority(val as EventPriorityType)
+                    onValueChange={(v) =>
+                      setBatchPriority(v as EventPriorityType)
                     }
                   >
                     <SelectTrigger className="w-32">
@@ -224,10 +231,28 @@ export default function EventList({ projectId }: { projectId?: number }) {
                     </SelectContent>
                   </Select>
                   <Button
-                    onClick={handleApplyPriority}
-                    disabled={!batchPriority || isMutating}
+                    onClick={applyBatchPriority}
+                    disabled={!batchPriority || isMutatingPriority}
                   >
-                    Apply
+                    Apply Priority
+                  </Button>
+                  <Select
+                    value={batchStatus}
+                    onValueChange={(v) => setBatchStatus(v as EventStatusType)}
+                  >
+                    <SelectTrigger className="w-32">
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="UNRESOLVED">UNRESOLVED</SelectItem>
+                      <SelectItem value="RESOLVED">RESOLVED</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    onClick={applyBatchStatus}
+                    disabled={!batchStatus || isMutatingStatus}
+                  >
+                    Apply Status
                   </Button>
                 </div>
               )}
@@ -250,13 +275,14 @@ export default function EventList({ projectId }: { projectId?: number }) {
                     <TableHead>기기</TableHead>
                     <TableHead>리플레이</TableHead>
                     <TableHead>Priority</TableHead>
+                    <TableHead>Status</TableHead>
                     <TableHead>Assignee</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {errorList?.content.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={7} className="h-24 text-center">
+                      <TableCell colSpan={8} className="h-24 text-center">
                         검색 조건에 맞는 에러가 없습니다.
                       </TableCell>
                     </TableRow>
@@ -308,17 +334,25 @@ export default function EventList({ projectId }: { projectId?: number }) {
                           )}
                         </TableCell>
                         <TableCell>
-                          {error.hasReplay ? (
+                          {error.hasReplay && (
                             <Badge variant="outline">
                               <Play />
                             </Badge>
-                          ) : null}
+                          )}
                         </TableCell>
                         <TableCell>
                           <PriorityDropdown
                             priority={error.priority}
                             projectId={projectId!}
                             eventId={error.id}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          {/* {error.status} */}
+                          <EventStatusDropdown
+                            projectId={projectId!}
+                            eventId={error.id}
+                            status={error.status}
                           />
                         </TableCell>
                         <TableCell>

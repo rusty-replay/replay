@@ -8,6 +8,9 @@ import React from 'react';
 export default function ErrorDetailPage() {
   const { projectId } = useGetProjectParams();
   const { eventId } = useGetEventParams();
+
+  console.log('eventId!!!!!!>>>', eventId);
+
   return (
     <div>
       <EventDetail params={{ eventId, projectId }} />
