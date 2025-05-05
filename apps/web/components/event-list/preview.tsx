@@ -45,6 +45,7 @@ import { formatDate } from '@/utils/date';
 import { useQueryProjectUsers } from '@/api/project/use-query-project-users';
 import { PriorityDropdown } from '../ui/priority-dropdown';
 import { AssigneeDropdown } from '../ui/assignee-dropdown';
+import { EventStatusDropdown } from '../ui/event-status-dropdown';
 
 export interface BackButtonProps {
   onClick: VoidFunction;
@@ -303,24 +304,46 @@ export const OverviewTab = ({
             </CardDescription>
           </div>
 
-          <div className="flex items-center gap-3">
-            <PriorityDropdown
-              priority={error.priority}
-              projectId={projectId}
-              eventId={error.id}
-            />
-            <AssigneeDropdown
-              projectId={projectId}
-              eventId={error.id}
-              userList={userList}
-              currentAssigneeId={error.assignedTo}
-            />
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium text-muted-foreground">
+                Status
+              </span>
+              <EventStatusDropdown
+                status={error.status}
+                projectId={projectId}
+                eventId={error.id}
+              />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium text-muted-foreground">
+                Priority
+              </span>
+              <PriorityDropdown
+                priority={error.priority}
+                projectId={projectId}
+                eventId={error.id}
+              />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium text-muted-foreground">
+                Assignee
+              </span>
+              <AssigneeDropdown
+                projectId={projectId}
+                eventId={error.id}
+                userList={userList}
+                currentAssigneeId={error.assignedTo}
+              />
+            </div>
           </div>
         </div>
       </CardHeader>
 
       <CardContent className="space-y-6">
-        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+        {/* <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
           <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
             <UserCircle size={16} />
             이슈 관리
@@ -348,7 +371,7 @@ export const OverviewTab = ({
               />
             </div>
           </div>
-        </div>
+        </div> */}
 
         <Separator />
 
