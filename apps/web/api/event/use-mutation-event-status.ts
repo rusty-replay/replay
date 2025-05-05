@@ -22,7 +22,7 @@ export function useMutationEventStatus({
   projectId: number;
   eventId: number;
   options?: UseMutationOptions<
-    EventReportListResponse,
+    EventReportListResponse[],
     ResponseError,
     EventStatus,
     EventStatusContext

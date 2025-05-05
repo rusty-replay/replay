@@ -1,16 +1,16 @@
 'use client';
 
 import EventDetail from '@/components/event-list/event-detail';
-import { useGetErrorParams } from '@/components/project/hooks/use-get-error-params';
+import { useGetEventParams } from '@/components/project/hooks/use-get-event-params';
 import { useGetProjectParams } from '@/components/project/hooks/use-get-project-params';
 import React from 'react';
 
 export default function ErrorDetailPage() {
   const { projectId } = useGetProjectParams();
-  const { issueId } = useGetErrorParams();
+  const { eventId } = useGetEventParams();
   return (
     <div>
-      <EventDetail params={{ issueId, projectId }} />
+      <EventDetail params={{ eventId, projectId }} />
     </div>
   );
 }

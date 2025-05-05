@@ -22,7 +22,7 @@ export function useMutationEventAssignee({
   projectId: number;
   eventId: number;
   options?: UseMutationOptions<
-    EventReportListResponse,
+    EventReportListResponse[],
     ResponseError,
     EventAssignee,
     EventAssigneeContext

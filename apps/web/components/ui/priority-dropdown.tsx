@@ -50,7 +50,7 @@ export function PriorityDropdown({ priority, projectId, eventId }: Props) {
   const [priorityLow, setPriorityLow] = useState<Checked>(priority === 'LOW');
 
   const { mutateAsync: mutatePriority, isPending: isMutatingPriority } =
-    useMutationEventPriority({ projectId: projectId!, eventId });
+    useMutationEventPriority({ projectId: projectId! });
 
   const handlePriorityChange = async (priority: EventPriorityType) => {
     await mutatePriority(

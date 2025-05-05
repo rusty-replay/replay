@@ -2,17 +2,18 @@ import { useQuery } from '@tanstack/react-query';
 import { UseQueryCustomOptions } from '../types';
 import { EventReportResponse } from './types';
 import axiosInstance from '../axios';
+import { eventKeys } from './keys';
 
 export function useQueryEventDetail({
   projectId,
-  issueId,
+  eventId,
   options,
 }: {
   projectId: number;
-  issueId: number;
+  eventId: number;
   options?: UseQueryCustomOptions<void, EventReportResponse>;
 }) {
-  const queryKey = `/api/projects/${projectId}/events/${issueId}`;
+  const queryKey = eventKeys.detail(projectId, eventId);
   const queryFn = async () =>
     await axiosInstance.get(queryKey).then((res) => res.data);
 

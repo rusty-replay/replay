@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useReducer } from 'react';
+import React, { useReducer, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -17,6 +17,7 @@ import {
   TableRow,
 } from '@workspace/ui/components/table';
 import { Button } from '@workspace/ui/components/button';
+import { Checkbox } from '@workspace/ui/components/checkbox';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { Badge } from '@workspace/ui/components/badge';
 import { Input } from '@workspace/ui/components/input';
@@ -27,25 +28,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@workspace/ui/components/select';
-import {
-  Search,
-  Clock,
-  ArrowRight,
-  Smartphone,
-  Globe,
-  Play,
-} from 'lucide-react';
+import { Search, Clock, Smartphone, Globe, Play } from 'lucide-react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { DateRange } from 'react-day-picker';
 import { useQueryErrorList } from '@/api/event/use-query-event-list';
+import {
+  useMutationEventPriority,
+  BatchEventPriority,
+} from '@/api/event/use-mutation-event-priority';
 import { useRouter } from 'next/navigation';
 import { DateRangePicker } from '@workspace/ui/components/calendars/date-range-picker';
 import { formatDate, formatDateFromNow } from '@/utils/date';
 import { PriorityDropdown } from '../ui/priority-dropdown';
 import { AssigneeDropdown } from '../ui/assignee-dropdown';
 import { useQueryProjectUsers } from '@/api/project/use-query-project-users';
+import { EventPriorityType } from '@/api/event/types';
 
 dayjs.extend(relativeTime);
 dayjs.locale('ko');
@@ -87,13 +86,13 @@ function reducer(state: State, action: Action): State {
   }
 }
 
-export default function EventList({
-  projectId,
-}: {
-  projectId: number | undefined;
-}) {
+export default function EventList({ projectId }: { projectId?: number }) {
   const router = useRouter();
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [batchPriority, setBatchPriority] = useState<
+    EventPriorityType | undefined
+  >(undefined);
 
   const { data: userList } = useQueryProjectUsers({ projectId: projectId! });
 
@@ -110,10 +109,42 @@ export default function EventList({
         ? dayjs(state.dateRange.to).endOf('day').toISOString()
         : null,
     },
-    options: {
-      enabled: !!projectId,
-    },
+    options: { enabled: !!projectId },
   });
+
+  const { mutateAsync: mutatePriority, isPending: isMutating } =
+    useMutationEventPriority({
+      projectId: projectId!,
+    });
+
+  const toggleSelect = (id: number) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const toggleAll = (checked: boolean) => {
+    if (checked && errorList) {
+      setSelectedIds(new Set(errorList.content.map((e) => e.id)));
+    } else {
+      setSelectedIds(new Set());
+    }
+  };
+
+  const handleApplyPriority = async () => {
+    if (batchPriority && selectedIds.size > 0) {
+      await mutatePriority(
+        { eventIds: Array.from(selectedIds), priority: batchPriority },
+        {
+          onSuccess: () => {
+            setSelectedIds(new Set());
+          },
+        }
+      );
+    }
+  };
 
   const navigateToDetail = (issueId: number) => {
     router.push(`/project/${projectId}/issues/${issueId}`);
@@ -121,6 +152,46 @@ export default function EventList({
 
   return (
     <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between mb-6 space-y-4 sm:space-y-0 sm:space-x-4">
+        <div className="relative w-full sm:w-1/3">
+          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="에러 메시지, 버전 또는 해시로 검색..."
+            className="pl-8"
+            value={state.searchTerm}
+            onChange={(e) =>
+              dispatch({ type: 'SET_SEARCH_TERM', payload: e.target.value })
+            }
+          />
+        </div>
+
+        <Select
+          value={state.filter}
+          onValueChange={(val) =>
+            dispatch({ type: 'SET_FILTER', payload: val })
+          }
+        >
+          <SelectTrigger className="w-full sm:w-1/3">
+            <SelectValue placeholder="환경 선택" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">모든 환경</SelectItem>
+            <SelectItem value="production">Production</SelectItem>
+            <SelectItem value="staging">Staging</SelectItem>
+            <SelectItem value="development">Development</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <div className="w-full sm:w-1/3">
+          <DateRangePicker
+            dateRange={state.dateRange}
+            onDateRangeChange={(range) =>
+              dispatch({ type: 'SET_DATE_RANGE', payload: range })
+            }
+          />
+        </div>
+      </div>
+
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Issue log</CardTitle>
@@ -130,46 +201,6 @@ export default function EventList({
         </CardHeader>
 
         <CardContent>
-          <div className="flex flex-col sm:flex-row justify-between mb-6 space-y-4 sm:space-y-0 sm:space-x-4">
-            <div className="relative w-full sm:w-1/3">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="에러 메시지, 버전 또는 해시로 검색..."
-                className="pl-8"
-                value={state.searchTerm}
-                onChange={(e) =>
-                  dispatch({ type: 'SET_SEARCH_TERM', payload: e.target.value })
-                }
-              />
-            </div>
-
-            <Select
-              value={state.filter}
-              onValueChange={(val) =>
-                dispatch({ type: 'SET_FILTER', payload: val })
-              }
-            >
-              <SelectTrigger className="w-full sm:w-1/3">
-                <SelectValue placeholder="환경 선택" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">모든 환경</SelectItem>
-                <SelectItem value="production">Production</SelectItem>
-                <SelectItem value="staging">Staging</SelectItem>
-                <SelectItem value="development">Development</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <div className="w-full sm:w-1/3">
-              <DateRangePicker
-                dateRange={state.dateRange}
-                onDateRangeChange={(range) =>
-                  dispatch({ type: 'SET_DATE_RANGE', payload: range })
-                }
-              />
-            </div>
-          </div>
-
           {isLoading ? (
             <div className="space-y-4">
               {Array.from({ length: 5 }).map((_, i) => (
@@ -178,13 +209,48 @@ export default function EventList({
             </div>
           ) : (
             <>
+              {selectedIds.size > 0 && (
+                <div className="flex items-center space-x-2 mb-4">
+                  <Select
+                    value={batchPriority}
+                    onValueChange={(val) =>
+                      setBatchPriority(val as EventPriorityType)
+                    }
+                  >
+                    <SelectTrigger className="w-32">
+                      <SelectValue placeholder="Priority" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="HIGH">HIGH</SelectItem>
+                      <SelectItem value="MED">MED</SelectItem>
+                      <SelectItem value="LOW">LOW</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    onClick={handleApplyPriority}
+                    disabled={!batchPriority || isMutating}
+                  >
+                    Apply
+                  </Button>
+                </div>
+              )}
+
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>issue</TableHead>
+                    <TableHead>
+                      <Checkbox
+                        checked={
+                          errorList
+                            ? selectedIds.size === errorList.content.length
+                            : false
+                        }
+                        onCheckedChange={toggleAll}
+                      />
+                    </TableHead>
+                    <TableHead>Issue</TableHead>
                     <TableHead>시간</TableHead>
                     <TableHead>기기</TableHead>
-                    {/* <TableHead>버전</TableHead> */}
                     <TableHead>리플레이</TableHead>
                     <TableHead>Priority</TableHead>
                     <TableHead>Assignee</TableHead>
@@ -193,13 +259,19 @@ export default function EventList({
                 <TableBody>
                   {errorList?.content.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="h-24 text-center">
+                      <TableCell colSpan={7} className="h-24 text-center">
                         검색 조건에 맞는 에러가 없습니다.
                       </TableCell>
                     </TableRow>
                   ) : (
                     errorList?.content.map((error) => (
                       <TableRow key={error.id}>
+                        <TableCell>
+                          <Checkbox
+                            checked={selectedIds.has(error.id)}
+                            onCheckedChange={() => toggleSelect(error.id)}
+                          />
+                        </TableCell>
                         <TableCell
                           className="cursor-pointer"
                           onClick={() => navigateToDetail(error.id)}
@@ -238,7 +310,6 @@ export default function EventList({
                             </div>
                           )}
                         </TableCell>
-
                         <TableCell>
                           {error.hasReplay ? (
                             <Badge variant="outline">
@@ -249,13 +320,13 @@ export default function EventList({
                         <TableCell>
                           <PriorityDropdown
                             priority={error.priority}
-                            projectId={projectId}
+                            projectId={projectId!}
                             eventId={error.id}
                           />
                         </TableCell>
                         <TableCell>
                           <AssigneeDropdown
-                            projectId={projectId}
+                            projectId={projectId!}
                             eventId={error.id}
                             userList={userList}
                             currentAssigneeId={error.assignedTo}
@@ -266,37 +337,6 @@ export default function EventList({
                   )}
                 </TableBody>
               </Table>
-
-              <div className="flex justify-between items-center mt-6">
-                <span className="text-sm text-muted-foreground">
-                  전체 {errorList?.filteredElements ?? 0}건
-                </span>
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    disabled={state.page === 1}
-                    onClick={() =>
-                      dispatch({ type: 'SET_PAGE', payload: state.page - 1 })
-                    }
-                  >
-                    이전
-                  </Button>
-                  <span className="text-sm">
-                    {state.page} / {errorList?.totalPages ?? 1}
-                  </span>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    disabled={!errorList?.hasNext}
-                    onClick={() =>
-                      dispatch({ type: 'SET_PAGE', payload: state.page + 1 })
-                    }
-                  >
-                    다음
-                  </Button>
-                </div>
-              </div>
             </>
           )}
         </CardContent>

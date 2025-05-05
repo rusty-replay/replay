@@ -74,22 +74,22 @@ export const LoadingSkeleton = () => (
 );
 
 export interface ErrorNotFoundProps {
-  issueId: number | undefined;
+  eventId: number | undefined;
   goBack: VoidFunction;
 }
 
-export const ErrorNotFound = ({ issueId, goBack }: ErrorNotFoundProps) => (
+export const EventNotFound = ({ eventId, goBack }: ErrorNotFoundProps) => (
   <Card>
     <CardContent className="p-6 flex flex-col items-center justify-center">
       <AlertCircle size={48} className="text-red-500 mb-4" />
       <h2 className="text-xl font-semibold mb-2">에러를 찾을 수 없습니다</h2>
       <p className="text-muted-foreground text-center">
-        요청하신 에러 ID: {issueId}를 찾을 수 없습니다.
+        요청하신 이벤트 ID: {eventId}를 찾을 수 없습니다.
         <br />
-        에러가 삭제되었거나 접근 권한이 없을 수 있습니다.
+        이벤트가 삭제되었거나 접근 권한이 없을 수 있습니다.
       </p>
       <Button variant="outline" className="mt-4" onClick={goBack}>
-        에러 목록으로 돌아가기
+        이벤트 목록으로 돌아가기
       </Button>
     </CardContent>
   </Card>

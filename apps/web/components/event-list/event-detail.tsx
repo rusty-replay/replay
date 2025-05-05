@@ -16,7 +16,7 @@ import 'rrweb-player/dist/style.css';
 import {
   BackButton,
   LoadingSkeleton,
-  ErrorNotFound,
+  EventNotFound,
   OverviewTab,
   StacktraceTab,
   ReplayTab,
@@ -26,14 +26,14 @@ import { decompressFromBase64 } from '@workspace/rusty-replay/index';
 interface ErrorDetailProps {
   params: {
     projectId: number | undefined;
-    issueId: number | undefined;
+    eventId: number | undefined;
   };
 }
 
 export default function EventDetail({ params }: ErrorDetailProps) {
   const router = useRouter();
   const projectId = params.projectId;
-  const issueId = params.issueId;
+  const eventId = params.eventId;
   const playerRef = useRef<HTMLDivElement>(null);
   const [playerInitialized, setPlayerInitialized] = useState(false);
   const [playerError, setPlayerError] = useState<string | null>(null);
@@ -41,10 +41,10 @@ export default function EventDetail({ params }: ErrorDetailProps) {
 
   const { data: error, isLoading } = useQueryEventDetail({
     projectId: projectId as number,
-    issueId: issueId as number,
+    eventId: eventId as number,
     options: {
       refetchOnWindowFocus: false,
-      enabled: !!(issueId && projectId),
+      enabled: !!(eventId && projectId),
     },
   });
 
@@ -234,7 +234,7 @@ export default function EventDetail({ params }: ErrorDetailProps) {
           )}
         </Tabs>
       ) : (
-        <ErrorNotFound issueId={issueId} goBack={goBack} />
+        <EventNotFound eventId={eventId} goBack={goBack} />
       )}
     </div>
   );
