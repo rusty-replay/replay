@@ -3,6 +3,8 @@
 import * as React from 'react';
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import QueryClientProvider from '@/providers/query-client-provider';
+import TelemetryProvider from '@/providers/telemetry-provider';
+import FlagProvider from '@/providers/flag-provider';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -13,7 +15,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
       disableTransitionOnChange
       enableColorScheme
     >
-      <QueryClientProvider>{children}</QueryClientProvider>
+      <TelemetryProvider>
+        <FlagProvider>
+          <QueryClientProvider>{children}</QueryClientProvider>
+        </FlagProvider>
+      </TelemetryProvider>
     </NextThemesProvider>
   );
 }

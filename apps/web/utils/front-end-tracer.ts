@@ -8,8 +8,9 @@ import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { registerInstrumentations } from '@opentelemetry/instrumentation';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
 import { resourceFromAttributes, osDetector } from '@opentelemetry/resources';
-import { SEMRESATTRS_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
+import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
+// import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-proto';
 // import { SessionIdProcessor } from './SessionIdProcessor';
 import { detectResources } from '@opentelemetry/resources/build/src/detect-resources';
 
@@ -25,16 +26,24 @@ declare global {
 }
 
 const {
-  NEXT_PUBLIC_OTEL_SERVICE_NAME = '',
+  NEXT_PUBLIC_OTEL_SERVICE_NAME = 'replay',
   NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = '',
   IS_SYNTHETIC_REQUEST = '',
-} = typeof window !== 'undefined' ? window.ENV : {};
+} = typeof window !== 'undefined' && window.ENV
+  ? window.ENV
+  : {
+      NEXT_PUBLIC_OTEL_SERVICE_NAME:
+        process.env.NEXT_PUBLIC_OTEL_SERVICE_NAME || 'replay',
+      NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT:
+        process.env.NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT || '',
+      IS_SYNTHETIC_REQUEST: process.env.IS_SYNTHETIC_REQUEST || '',
+    };
 
 export const FrontendTracer = async () => {
   const { ZoneContextManager } = await import('@opentelemetry/context-zone');
 
   let resource = resourceFromAttributes({
-    [SEMRESATTRS_SERVICE_NAME]: NEXT_PUBLIC_OTEL_SERVICE_NAME,
+    [ATTR_SERVICE_NAME]: NEXT_PUBLIC_OTEL_SERVICE_NAME,
   });
   const detectedResources = detectResources({ detectors: [osDetector] });
   resource = resource.merge(detectedResources);
@@ -47,7 +56,11 @@ export const FrontendTracer = async () => {
         new OTLPTraceExporter({
           url:
             NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT ||
-            'http://localhost:4318/v1/traces',
+            'http://localhost:8081/traces',
+
+          headers: {
+            'Content-Type': 'application/x-protobuf',
+          },
         }),
         {
           scheduledDelayMillis: 500,
