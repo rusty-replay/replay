@@ -1,6 +1,6 @@
 {
   "name": "rusty-replay",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Lightweight error tracking and replay system for React apps using rrweb and Rust-powered backend integration.",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
