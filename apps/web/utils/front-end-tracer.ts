@@ -13,6 +13,8 @@ import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-proto';
 // import { SessionIdProcessor } from './SessionIdProcessor';
 import { detectResources } from '@opentelemetry/resources/build/src/detect-resources';
+import { FetchInstrumentation } from '@opentelemetry/instrumentation-fetch';
+import { XMLHttpRequestInstrumentation } from '@opentelemetry/instrumentation-xml-http-request';
 
 declare global {
   interface Window {
@@ -38,6 +40,10 @@ const {
         process.env.NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT || '',
       IS_SYNTHETIC_REQUEST: process.env.IS_SYNTHETIC_REQUEST || '',
     };
+
+const endpoint =
+  NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT ||
+  'http://localhost:8081/traces';
 
 export const FrontendTracer = async () => {
   const { ZoneContextManager } = await import('@opentelemetry/context-zone');
@@ -73,26 +79,41 @@ export const FrontendTracer = async () => {
 
   provider.register({
     contextManager,
-    propagator: new CompositePropagator({
-      propagators: [
-        new W3CBaggagePropagator(),
-        new W3CTraceContextPropagator(),
-      ],
-    }),
+    // fetch, xhr을 제외한 모든 event
+    // propagator: new CompositePropagator({
+    //   propagators: [
+    //     new W3CBaggagePropagator(),
+    //     new W3CTraceContextPropagator(),
+    //   ],
+    // }),
+  });
+
+  const backendOrigin = new URL(endpoint).origin; // "http://localhost:8081"
+
+  const fetchInstrumentation = new FetchInstrumentation({
+    propagateTraceHeaderCorsUrls: [backendOrigin],
+    clearTimingResources: true,
+  });
+
+  const xhrInstrumentation = new XMLHttpRequestInstrumentation({
+    propagateTraceHeaderCorsUrls: [backendOrigin],
+    clearTimingResources: true,
   });
 
   registerInstrumentations({
     tracerProvider: provider,
     instrumentations: [
-      getWebAutoInstrumentations({
-        '@opentelemetry/instrumentation-fetch': {
-          propagateTraceHeaderCorsUrls: /.*/,
-          clearTimingResources: true,
-          applyCustomAttributesOnSpan(span) {
-            span.setAttribute('app.synthetic_request', IS_SYNTHETIC_REQUEST);
-          },
-        },
-      }),
+      fetchInstrumentation,
+      xhrInstrumentation,
+      // getWebAutoInstrumentations({
+      //   '@opentelemetry/instrumentation-fetch': {
+      //     propagateTraceHeaderCorsUrls: /.*/,
+      //     clearTimingResources: true,
+      //     applyCustomAttributesOnSpan(span) {
+      //       span.setAttribute('app.synthetic_request', IS_SYNTHETIC_REQUEST);
+      //     },
+      //   },
+      // }),
     ],
   });
 };
