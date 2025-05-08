@@ -16,9 +16,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
       enableColorScheme
     >
       <TelemetryProvider>
-        <FlagProvider>
-          <QueryClientProvider>{children}</QueryClientProvider>
-        </FlagProvider>
+        {/* <FlagProvider> */}
+        <QueryClientProvider>{children}</QueryClientProvider>
+        {/* </FlagProvider> */}
       </TelemetryProvider>
     </NextThemesProvider>
   );

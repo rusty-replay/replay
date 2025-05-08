@@ -195,6 +195,36 @@ importers:
 
   packages/rusty-replay:
     dependencies:
+      '@opentelemetry/context-zone':
+        specifier: ^2.0.0
+        version: 2.0.0(@opentelemetry/api@1.9.0)
+      '@opentelemetry/core':
+        specifier: ^2.0.0
+        version: 2.0.0(@opentelemetry/api@1.9.0)
+      '@opentelemetry/exporter-trace-otlp-proto':
+        specifier: ^0.200.0
+        version: 0.200.0(@opentelemetry/api@1.9.0)
+      '@opentelemetry/instrumentation':
+        specifier: ^0.200.0
+        version: 0.200.0(@opentelemetry/api@1.9.0)
+      '@opentelemetry/instrumentation-fetch':
+        specifier: ^0.200.0
+        version: 0.200.0(@opentelemetry/api@1.9.0)
+      '@opentelemetry/instrumentation-xml-http-request':
+        specifier: ^0.200.0
+        version: 0.200.0(@opentelemetry/api@1.9.0)
+      '@opentelemetry/resources':
+        specifier: ^2.0.0
+        version: 2.0.0(@opentelemetry/api@1.9.0)
+      '@opentelemetry/sdk-trace-base':
+        specifier: ^2.0.0
+        version: 2.0.0(@opentelemetry/api@1.9.0)
+      '@opentelemetry/sdk-trace-web':
+        specifier: ^2.0.0
+        version: 2.0.0(@opentelemetry/api@1.9.0)
+      '@opentelemetry/semantic-conventions':
+        specifier: ^1.32.0
+        version: 1.32.0
       '@rrweb/packer':
         specifier: 2.0.0-alpha.18
         version: 2.0.0-alpha.18
@@ -207,9 +237,15 @@ importers:
       fflate:
         specifier: ^0.8.2
         version: 0.8.2
+      import-in-the-middle:
+        specifier: ^1.13.1
+        version: 1.13.1
       react:
         specifier: ^16.8 || ^17 || ^18 || ^19
         version: 19.0.0
+      require-in-the-middle:
+        specifier: ^7.5.2
+        version: 7.5.2
       rrweb:
         specifier: ^2.0.0-alpha.4
         version: 2.0.0-alpha.4

@@ -20,6 +20,11 @@
     "cli",
     "monitoring"
   ],
+  "browser": {
+    "require-in-the-middle": false,
+    "import-in-the-middle": false,
+    "@opentelemetry/instrumentation": false
+  },
   "author": "Jaeha Lee <wogkdkrm112@gmail.com>",
   "license": "MIT",
   "repository": {
@@ -34,9 +39,21 @@
     "@rrweb/types": "^2.0.0-alpha.4",
     "react": "^16.8 || ^17 || ^18 || ^19",
     "rrweb": "^2.0.0-alpha.4",
-    "rrweb-player": "^1.0.0-alpha.4"
+    "rrweb-player": "^1.0.0-alpha.4",
+    "import-in-the-middle": "^1.13.1",
+    "require-in-the-middle": "^7.5.2"
   },
   "dependencies": {
+    "@opentelemetry/context-zone": "^2.0.0",
+    "@opentelemetry/core": "^2.0.0",
+    "@opentelemetry/exporter-trace-otlp-proto": "^0.200.0",
+    "@opentelemetry/instrumentation": "^0.200.0",
+    "@opentelemetry/instrumentation-fetch": "^0.200.0",
+    "@opentelemetry/instrumentation-xml-http-request": "^0.200.0",
+    "@opentelemetry/resources": "^2.0.0",
+    "@opentelemetry/sdk-trace-base": "^2.0.0",
+    "@opentelemetry/sdk-trace-web": "^2.0.0",
+    "@opentelemetry/semantic-conventions": "^1.32.0",
     "@rrweb/packer": "2.0.0-alpha.18",
     "axios": "^1.8.4",
     "fflate": "^0.8.2",
