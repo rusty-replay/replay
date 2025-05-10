@@ -26,7 +26,7 @@ import {
   CardTitle,
 } from '@workspace/ui/components/card';
 import { Skeleton } from '@workspace/ui/components/skeleton';
-import { formatDateFromNow, formatDuration, formatTime } from '@/utils/date';
+import { formatDuration } from '@/utils/date';
 import { useQueryTransactions } from '@/api/traces/use-query-transactions';
 import { TransactionResponse } from '@/api/traces/types';
 import { useRouter } from 'next/navigation';

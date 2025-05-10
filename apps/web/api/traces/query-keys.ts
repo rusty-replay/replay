@@ -6,4 +6,6 @@ export const tracesQueryKeys = {
     params.page,
     params.size,
   ],
+  getTransactionSpans: (transactionId: string) =>
+    `/api/transactions/${transactionId}/spans`,
 };
