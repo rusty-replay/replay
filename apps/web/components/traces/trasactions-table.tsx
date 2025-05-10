@@ -26,13 +26,19 @@ import {
   CardTitle,
 } from '@workspace/ui/components/card';
 import { Skeleton } from '@workspace/ui/components/skeleton';
-import { formatDuration, formatTime } from '@/utils/date';
+import { formatDateFromNow, formatDuration, formatTime } from '@/utils/date';
 import { useQueryTransactions } from '@/api/traces/use-query-transactions';
 import { TransactionResponse } from '@/api/traces/types';
+import { useRouter } from 'next/navigation';
+import dayjs from 'dayjs';
+
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime);
 
 export default function TransactionsTable() {
+  const router = useRouter();
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(20);
 
   const { data, isLoading, isError, error } = useQueryTransactions({
     page,
@@ -40,7 +46,7 @@ export default function TransactionsTable() {
   });
 
   const transactions = data?.content || [];
-  const totalPages = data ? Math.ceil(data.totalPages / data.size) : 0;
+  const totalPages = data ? Math.ceil(data.totalElements / data.size) : 0;
 
   const goToPage = (newPage: number) => {
     setPage(Math.max(1, Math.min(newPage, totalPages)));
@@ -77,14 +83,12 @@ export default function TransactionsTable() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-12">ID</TableHead>
-                <TableHead>트랜잭션 ID</TableHead>
+                <TableHead>ID</TableHead>
                 <TableHead>이름</TableHead>
-                <TableHead>시작 시간</TableHead>
-                <TableHead>종료 시간</TableHead>
-                <TableHead>지속 시간</TableHead>
-                <TableHead>환경</TableHead>
-                <TableHead>태그</TableHead>
+                <TableHead>Duration</TableHead>
+                <TableHead>Timestamp</TableHead>
+                <TableHead>Env</TableHead>
+                <TableHead>Tag</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -160,20 +164,26 @@ export default function TransactionsTable() {
 }
 
 function TransactionRow({ transaction }: { transaction: TransactionResponse }) {
+  const router = useRouter();
+
   return (
-    <TableRow
-      className="cursor-pointer hover:bg-muted/50"
-      onClick={() => (window.location.href = `/transactions/${transaction.id}`)}
-    >
-      <TableCell className="font-medium">{transaction.id}</TableCell>
-      <TableCell className="font-mono text-xs">{transaction.traceId}</TableCell>
+    <TableRow className="hover:bg-muted/50">
+      <TableCell
+        onClick={() =>
+          router.push(
+            `/traces/${transaction.projectId}/trace/${transaction.traceId}`
+          )
+        }
+        className="font-mono font-semibold text-xs cursor-pointer text-blue-600 hover:text-blue-800"
+      >
+        {transaction.traceId}
+      </TableCell>
       <TableCell>{transaction.name}</TableCell>
-      <TableCell>{formatTime(transaction.startTimeStamp)}</TableCell>
-      <TableCell>{formatTime(transaction.endTimeStamp)}</TableCell>
       <TableCell className="flex items-center">
         <Clock className="mr-1 h-3 w-3 text-muted-foreground" />
         {formatDuration(transaction.durationMs)}
       </TableCell>
+      <TableCell>{dayjs(transaction.startTimeStamp).fromNow()}</TableCell>
       <TableCell>
         <Badge
           variant={
