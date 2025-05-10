@@ -25,6 +25,9 @@ interface BaseTimeEntity {
   updatedAt: string | null;
 }
 
+/**
+ * @deprecated
+ */
 interface PaginatedResponse<T> {
   content: T[];
   page: number;
@@ -33,6 +36,16 @@ interface PaginatedResponse<T> {
   filteredElements: number;
   totalPages: number;
   hasNext: boolean;
+}
+
+export interface PaginationResponse<T> {
+  content: T[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  isFirst: boolean;
+  isLast: boolean;
 }
 
 export type {

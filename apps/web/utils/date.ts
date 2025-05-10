@@ -24,3 +24,24 @@ export function formatDate(
     return dateString;
   }
 }
+
+export function formatTime(dateStr: string) {
+  try {
+    return dayjs(dateStr).format('YYYY-MM-DD HH:mm:ss.SSS');
+  } catch (e) {
+    return dateStr;
+  }
+}
+
+export function formatDuration(ms: number) {
+  if (ms < 1000) return `${ms}ms`;
+
+  const seconds = Math.floor(ms / 1000);
+  const remainingMs = ms % 1000;
+
+  if (seconds < 60) return `${seconds}.${remainingMs}s`;
+
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes}m ${remainingSeconds}s`;
+}

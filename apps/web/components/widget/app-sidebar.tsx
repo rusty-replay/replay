@@ -18,6 +18,7 @@ import {
   Shield,
   Users2,
   Zap,
+  AudioWaveform,
 } from 'lucide-react';
 
 import { TeamSwitcher } from '@workspace/ui/components/team-switcher';
@@ -66,6 +67,11 @@ const data = {
       name: 'Issues',
       url: '#',
       icon: Shield,
+    },
+    {
+      name: 'Traces',
+      url: '/traces/1',
+      icon: AudioWaveform,
     },
   ],
   navMain: [
