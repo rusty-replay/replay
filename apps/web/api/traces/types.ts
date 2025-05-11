@@ -3,8 +3,8 @@ export interface TransactionResponse {
   projectId: number;
   traceId: string;
   name: string;
-  startTimeStamp: string;
-  endTimeStamp: string;
+  startTimestamp: string;
+  endTimestamp: string;
   durationMs: number;
   environment: string;
   tags: string | null;
@@ -16,8 +16,8 @@ export interface SpansResponse {
   spanId: string;
   parentSpanId: string | null;
   name: string;
-  startTimeStamp: string;
-  endTimeStamp: string;
+  startTimestamp: string;
+  endTimestamp: string;
   durationMs: number;
   httpMethod: string | null;
   httpUrl: string | null;

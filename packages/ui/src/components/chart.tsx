@@ -22,6 +22,7 @@ export {
   ReferenceLine,
   ScatterChart,
   Scatter,
+  ComposedChart,
 } from 'recharts';
 
 export type ChartConfig = {

@@ -15,40 +15,31 @@ export default function TraceTimeline({
   const sortedSpans = useMemo(() => {
     return [...spans].sort(
       (a, b) =>
-        dayjs(a.startTimeStamp).valueOf() - dayjs(b.startTimeStamp).valueOf()
+        dayjs(a.startTimestamp).valueOf() - dayjs(b.startTimestamp).valueOf()
     );
   }, [spans]);
 
-  const totalDuration = useMemo(() => {
-    if (sortedSpans.length === 0) return 0;
-
-    const firstStart = dayjs(sortedSpans[0].startTimeStamp).valueOf();
-    const lastEnd = dayjs(
-      sortedSpans[sortedSpans.length - 1].endTimeStamp
-    ).valueOf();
-
-    return lastEnd - firstStart;
-  }, [sortedSpans]);
-
   const spanData = useMemo(() => {
-    let accumulatedWidth = 0;
-    let currentPosition = 0;
+    const transactionStart = dayjs(transaction.startTimestamp).valueOf();
+    const transactionDuration = transaction.durationMs;
 
-    return sortedSpans.map((span, index) => {
-      const spanDuration = span.durationMs;
-      const widthPercentage = (spanDuration / transaction.durationMs) * 100;
+    return sortedSpans.map((span) => {
+      const spanStart = dayjs(span.startTimestamp).valueOf();
+      const relativeStart = spanStart - transactionStart;
 
-      currentPosition = accumulatedWidth;
+      const startPosition = (relativeStart / transactionDuration) * 100;
 
-      accumulatedWidth += widthPercentage;
+      const widthPercentage = (span.durationMs / transactionDuration) * 100;
+
+      const adjustedWidth = Math.min(widthPercentage, 100 - startPosition);
 
       const isHttpSpan = span.httpMethod && span.httpUrl;
       const isError = span.httpStatusCode && span.httpStatusCode >= 400;
 
       return {
         span,
-        startPosition: currentPosition,
-        width: widthPercentage,
+        startPosition: Math.max(0, Math.min(100, startPosition)),
+        width: Math.max(1, adjustedWidth),
         isHttpSpan,
         isError,
         durationText:
@@ -57,7 +48,7 @@ export default function TraceTimeline({
             : `${span.durationMs}ms`,
       };
     });
-  }, [sortedSpans, transaction.durationMs]);
+  }, [sortedSpans, transaction]);
 
   const timeMarkers = useMemo(() => {
     const markers = [];

@@ -81,8 +81,8 @@ export default function TraceView({ traceId }: TraceViewProps) {
     const sortNodesByStartTime = (nodes: SpanNode[]) => {
       nodes.sort(
         (a, b) =>
-          dayjs(a.span.startTimeStamp).valueOf() -
-          dayjs(b.span.startTimeStamp).valueOf()
+          dayjs(a.span.startTimestamp).valueOf() -
+          dayjs(b.span.startTimestamp).valueOf()
       );
       nodes.forEach((node) => {
         if (node.children.length > 0) {
@@ -160,7 +160,6 @@ export default function TraceView({ traceId }: TraceViewProps) {
     );
   }
 
-  // 첫 렌더링 시 아직 선택된 스팬이 없으면 첫 번째 span 선택
   if (!selectedSpanId && data.spans.length > 0) {
     setTimeout(() => {
       handleSelectSpan(data.spans[0].spanId);
@@ -349,19 +348,18 @@ function SpanDetails({
           </TabsList>
 
           <TabsContent value="details" className="space-y-4">
-            {/* 개요 섹션 */}
             <div>
               <h3 className="text-sm font-medium mb-2">개요</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <InfoItem
                   label="시작 시간"
-                  value={dayjs(span.startTimeStamp).format(
+                  value={dayjs(span.startTimestamp).format(
                     'YYYY-MM-DD HH:mm:ss.SSS'
                   )}
                 />
                 <InfoItem
                   label="종료 시간"
-                  value={dayjs(span.endTimeStamp).format(
+                  value={dayjs(span.endTimestamp).format(
                     'YYYY-MM-DD HH:mm:ss.SSS'
                   )}
                 />
