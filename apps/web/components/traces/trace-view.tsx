@@ -28,6 +28,8 @@ import {
 } from 'lucide-react';
 import dayjs from 'dayjs';
 import { formatDuration } from '@/utils/date';
+import TraceTimeline from './trace-timeline';
+
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 
@@ -172,7 +174,6 @@ export default function TraceView({ traceId }: TraceViewProps) {
 
   return (
     <div className="space-y-6">
-      {/* 타임라인 섹션 */}
       <Card className="w-full">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">Trace Timeline</CardTitle>
@@ -185,9 +186,7 @@ export default function TraceView({ traceId }: TraceViewProps) {
         </CardContent>
       </Card>
 
-      {/* 스팬 트리 및 상세 정보 */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* 왼쪽 사이드바 */}
         <div className="md:col-span-1">
           <Card className="h-full">
             <CardHeader className="pb-3">
@@ -205,6 +204,8 @@ export default function TraceView({ traceId }: TraceViewProps) {
                       isSelected={selectedSpanId === node.span.spanId}
                       onToggle={toggleNode}
                       onSelect={handleSelectSpan}
+                      expandedNodes={expandedNodes}
+                      selectedSpanId={selectedSpanId}
                     />
                   ))}
                 </div>
@@ -213,99 +214,12 @@ export default function TraceView({ traceId }: TraceViewProps) {
           </Card>
         </div>
 
-        {/* 오른쪽: 선택된 span 상세 정보 */}
         <div className="md:col-span-2">
           {selectedSpan && (
             <SpanDetails span={selectedSpan} transaction={data.transaction} />
           )}
         </div>
       </div>
-    </div>
-  );
-}
-
-function TraceTimeline({
-  spans,
-  transaction,
-}: {
-  spans: SpansResponse[];
-  transaction: TransactionResponse;
-}) {
-  const transactionStart = dayjs(transaction.startTimeStamp).valueOf();
-  const transactionEnd = dayjs(transaction.endTimeStamp).valueOf();
-  const totalDuration = transactionEnd - transactionStart;
-
-  const sortedSpans = [...spans].sort(
-    (a, b) =>
-      dayjs(a.startTimeStamp).valueOf() - dayjs(b.startTimeStamp).valueOf()
-  );
-
-  return (
-    <div className="space-y-1">
-      {/* 타임라인 눈금 */}
-      <div className="w-full flex justify-between text-xs text-muted-foreground mb-2">
-        <div>0ms</div>
-        <div>{formatDuration(totalDuration / 4)}</div>
-        <div>{formatDuration(totalDuration / 2)}</div>
-        <div>{formatDuration((totalDuration * 3) / 4)}</div>
-        <div>{formatDuration(totalDuration)}</div>
-      </div>
-
-      {/* 각 스팬에 대한 타임라인 막대 */}
-      {sortedSpans.map((span) => {
-        const spanStart = dayjs(span.startTimeStamp).valueOf();
-        const spanEnd = dayjs(span.endTimeStamp).valueOf();
-        const safeTotal = totalDuration <= 0 ? 1 : totalDuration;
-
-        const offsetPercentage =
-          ((spanStart - transactionStart) / safeTotal) * 100;
-        const widthPercentage = ((spanEnd - spanStart) / safeTotal) * 100;
-
-        const displayOffsetPercentage = isNaN(offsetPercentage)
-          ? 0
-          : Math.max(0, Math.min(100, offsetPercentage));
-        const displayWidthPercentage =
-          isNaN(widthPercentage) || widthPercentage <= 0
-            ? 1
-            : Math.min(100, widthPercentage);
-
-        const isHttpSpan = span.httpMethod && span.httpUrl;
-
-        return (
-          <div key={span.spanId} className="flex items-center mb-2">
-            <div className="w-48 truncate text-sm pr-2">
-              <div className="flex items-center">
-                {isHttpSpan ? (
-                  <Globe className="h-4 w-4 mr-1 text-blue-500" />
-                ) : (
-                  <Server className="h-4 w-4 mr-1 text-slate-500" />
-                )}
-                <span className="truncate">{span.name}</span>
-              </div>
-            </div>
-            <div className="flex-1 relative h-6 bg-muted/30 rounded-md">
-              <div
-                className={`absolute top-0 h-full rounded-md ${
-                  span.httpStatusCode && span.httpStatusCode >= 400
-                    ? 'bg-red-500/20'
-                    : 'bg-blue-500/20'
-                }`}
-                style={{
-                  left: `${displayOffsetPercentage}%`,
-                  width: `${displayWidthPercentage}%`,
-                  minWidth: '3px',
-                }}
-              >
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-xs font-medium">
-                    {formatDuration(span.durationMs)}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      })}
     </div>
   );
 }

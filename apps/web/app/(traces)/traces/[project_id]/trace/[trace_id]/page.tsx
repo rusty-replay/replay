@@ -13,6 +13,7 @@ import {
 } from '@workspace/ui/components/breadcrumb';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import TraceView from '@/components/traces/trace-view';
+import dayjs from 'dayjs';
 
 export default function TracePage() {
   const params = useParams<{ trace_id: string }>();
@@ -56,7 +57,6 @@ export default function TracePage() {
 
   return (
     <div className="space-y-6">
-      {/* 헤더 및 네비게이션 */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <Breadcrumb className="mb-2">
@@ -81,7 +81,9 @@ export default function TracePage() {
             {transaction.transaction.name}
           </h1>
           <p className="text-muted-foreground text-sm">
-            {new Date(transaction.transaction.startTimeStamp).toLocaleString()}
+            {dayjs(transaction.transaction.startTimeStamp).format(
+              'YYYY-MM-DD HH:mm:ss'
+            )}
           </p>
         </div>
 
@@ -90,7 +92,6 @@ export default function TracePage() {
         </Button>
       </div>
 
-      {/* 트레이스 뷰 컴포넌트 */}
       <TraceView traceId={traceId} />
     </div>
   );
