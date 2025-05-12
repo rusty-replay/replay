@@ -81,7 +81,7 @@ export default function TracePage() {
             {transaction.transaction.name}
           </h1>
           <p className="text-muted-foreground text-sm">
-            {dayjs(transaction.transaction.startTimeStamp).format(
+            {dayjs(transaction.transaction.createdAt).format(
               'YYYY-MM-DD HH:mm:ss'
             )}
           </p>

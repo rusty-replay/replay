@@ -84,7 +84,7 @@ export default function TransactionsTable() {
             <TableHeader>
               <TableRow>
                 <TableHead>ID</TableHead>
-                <TableHead>이름</TableHead>
+                <TableHead>Transaction Name</TableHead>
                 <TableHead>Duration</TableHead>
                 <TableHead>Timestamp</TableHead>
                 <TableHead>Env</TableHead>
@@ -183,7 +183,9 @@ function TransactionRow({ transaction }: { transaction: TransactionResponse }) {
         <Clock className="mr-1 h-3 w-3 text-muted-foreground" />
         {formatDuration(transaction.durationMs)}
       </TableCell>
-      <TableCell>{dayjs(transaction.startTimeStamp).fromNow()}</TableCell>
+      <TableCell>
+        {dayjs(transaction.createdAt).format('YYYY-MM-DD HH:mm:ss')}
+      </TableCell>
       <TableCell>
         <Badge
           variant={

@@ -1,4 +1,6 @@
-export interface TransactionResponse {
+import { BaseTimeEntity } from '../types';
+
+export interface TransactionResponse extends Pick<BaseTimeEntity, 'createdAt'> {
   id: number;
   projectId: number;
   traceId: string;

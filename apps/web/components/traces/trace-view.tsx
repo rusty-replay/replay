@@ -162,7 +162,9 @@ export default function TraceView({ traceId }: TraceViewProps) {
 
   if (!selectedSpanId && data.spans.length > 0) {
     setTimeout(() => {
-      handleSelectSpan(data.spans[0].spanId);
+      if (data?.spans?.[0]?.spanId) {
+        handleSelectSpan(data.spans[0].spanId);
+      }
     }, 0);
   }
 
