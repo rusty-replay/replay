@@ -1,22 +1,8 @@
-import { useState } from 'react';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@workspace/ui/components/table';
-import { Button } from '@workspace/ui/components/button';
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-  Clock,
-  Activity,
-} from 'lucide-react';
+import { TransactionResponse } from '@/api/traces/types';
+import { useQueryTransactions } from '@/api/traces/use-query-transactions';
+import { formatDuration } from '@/utils/date';
 import { Badge } from '@workspace/ui/components/badge';
+import { Button } from '@workspace/ui/components/button';
 import {
   Card,
   CardContent,
@@ -26,23 +12,35 @@ import {
   CardTitle,
 } from '@workspace/ui/components/card';
 import { Skeleton } from '@workspace/ui/components/skeleton';
-import { formatDuration } from '@/utils/date';
-import { useQueryTransactions } from '@/api/traces/use-query-transactions';
-import { TransactionResponse } from '@/api/traces/types';
-import { useRouter } from 'next/navigation';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@workspace/ui/components/table';
 import dayjs from 'dayjs';
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  Clock,
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 
+const PAGE_SIZE = 20;
 export default function TransactionsTable() {
-  const router = useRouter();
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
 
   const { data, isLoading, isError, error } = useQueryTransactions({
     page,
-    size: pageSize,
+    size: PAGE_SIZE,
   });
 
   const transactions = data?.content || [];
@@ -114,8 +112,8 @@ export default function TransactionsTable() {
         <div className="text-sm text-muted-foreground">
           {data ? (
             <>
-              전체 {data.totalPages}개 중 {(page - 1) * pageSize + 1}-
-              {Math.min(page * pageSize, data.totalPages)}개 표시
+              전체 {data.totalPages}개 중 {(page - 1) * PAGE_SIZE + 1}-
+              {Math.min(page * PAGE_SIZE, data.totalPages)}개 표시
             </>
           ) : (
             '로딩 중...'

@@ -1,6 +1,7 @@
-import { useState, useMemo, ReactNode } from 'react';
-import { useQuerySpans } from '@/api/traces/use-query-spans';
 import { SpansResponse, TransactionResponse } from '@/api/traces/types';
+import { useQuerySpans } from '@/api/traces/use-query-spans';
+import { formatDuration } from '@/utils/date';
+import { Badge } from '@workspace/ui/components/badge';
 import {
   Card,
   CardContent,
@@ -8,26 +9,25 @@ import {
   CardHeader,
   CardTitle,
 } from '@workspace/ui/components/card';
+import { ScrollArea } from '@workspace/ui/components/scroll-area';
 import { Skeleton } from '@workspace/ui/components/skeleton';
-import { Badge } from '@workspace/ui/components/badge';
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from '@workspace/ui/components/tabs';
-import { ScrollArea } from '@workspace/ui/components/scroll-area';
+import dayjs from 'dayjs';
 import {
-  ChevronRight,
+  AlertCircle,
   ChevronDown,
+  ChevronRight,
   Clock,
-  Server,
   Globe,
   Info,
-  AlertCircle,
+  Server,
 } from 'lucide-react';
-import dayjs from 'dayjs';
-import { formatDuration } from '@/utils/date';
+import { ReactNode, useMemo, useState } from 'react';
 import TraceTimeline from './trace-timeline';
 
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -54,7 +54,6 @@ export default function TraceView({ traceId }: TraceViewProps) {
     const spanMap = new Map<string, SpanNode>();
     const rootNodes: SpanNode[] = [];
 
-    // 먼저 모든 스팬을 맵에 추가
     data.spans.forEach((span) => {
       spanMap.set(span.spanId, {
         span,
