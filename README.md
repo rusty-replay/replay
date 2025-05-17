@@ -55,6 +55,12 @@
 
 - 오류가 발생한 정확한 위치와 원인을 파악
 
+### trace, span
+<img width="500" alt="span timeline" src="https://github.com/user-attachments/assets/15ae07e3-0f26-4cfb-a448-4461c207280b" />
+
+- trace, span tracking
+
+
 ### 세션 리플레이
 
 <img width="500" alt="r-7" src="https://github.com/user-attachments/assets/7fb90cae-1b12-48a9-88e4-7e45cb707091" />
